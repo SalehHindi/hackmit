@@ -61,13 +61,13 @@ app.post('/webhook/', function (req, res) {
 	        	// Do you want to learn more about moral trades?
         		case 1:
         			if (text == "gun") {
-        				state = 000
+        				state = 0
         				sendTextMessage(sender, "gun", token)
         			} else if (text == "abortion") {
-        				state = 000
+        				state = 0
         				sendTextMessage(sender, "abortion", token)
         			} else if (text == "president") {
-        				state = 000
+        				state = 0
         				sendTextMessage(sender, "president", token)
         			}
 
