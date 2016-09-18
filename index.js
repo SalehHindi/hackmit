@@ -53,23 +53,25 @@ app.post('/webhook/', function (req, res) {
         			} else if (text == "no") {
         				state = 2
         				sendTextMessage(sender, "Great!", token)
-			            sendTextMessage(sender, "Hello there no")
+			            sendTextMessage(sender, "Hello there noooo")
         			}
 
 	        		break
 
 	        	// Do you want to learn more about moral trades?
-        		// case (1):
-        		// 	if (text == "gun") {
-        		// 		state = 000
-        		// 		sendTextMessage(sender, "gun", token)
-        		// 	} else if (text == "abortion") {
-        		// 		state = 000
-        		// 		sendTextMessage(sender, "abortion", token)
-        		// 	} else if (text == "president") {
-        		// 		state = 000
-        		// 		sendTextMessage(sender, "president", token)
-        		// 	}
+        		case 1:
+        			if (text == "gun") {
+        				state = 000
+        				sendTextMessage(sender, "gun", token)
+        			} else if (text == "abortion") {
+        				state = 000
+        				sendTextMessage(sender, "abortion", token)
+        			} else if (text == "president") {
+        				state = 000
+        				sendTextMessage(sender, "president", token)
+        			}
+
+        			break
 
         		default:
         			state = 0
