@@ -76,7 +76,7 @@ app.post('/webhook/', function (req, res) {
         				sendTextMessage(sender, "ok here is some info", token)
         				sendTextMessage(sender, "attachment", token)
         			} else if (text == "no") {
-        				// state = 000
+        				state = 000
         				sendTextMessage(sender, "ok bye bye", token)
         			}
 
@@ -118,24 +118,25 @@ function sendTextMessage(sender, text) {
 }
 
 // A type of message to send
-function sendGenericMessage(sender, titles, subtitles) {
+function sendGenericMessage(sender, title, subtitle) {
     let messageData = {
         "attachment": {
             "type": "template",
             "payload": {
                 "template_type": "generic",
                 "elements": [{
-                    "title": titles,
-                    "subtitle": subtitles,
+                    "title": title,
+                    "subtitle": subtitle,
                     "buttons": [{
                         "type": "postback",
                         "title": "Yes",
-                        "payload": "yes"
+                        "payload": "yes",
+
                     }, 
                     {
                         "type": "postback",
                         "title": "No",
-                        "payload": "no"
+                        "payload": "no",
                     }],
                 }]
             }
@@ -170,13 +171,13 @@ function causeSelection(sender) {
                     "buttons": [{
                         "type": "postback",
                         "title": "Yes",
-                        "payload": "yes"
+                        "payload": "yes",
 
                     }, 
                     {
                         "type": "postback",
                         "title": "No",
-                        "payload": "no"
+                        "payload": "no",
                     }],
                 }]
             }
