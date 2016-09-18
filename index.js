@@ -49,15 +49,16 @@ app.post('/webhook/', function (req, res) {
         		case (0):
         			if (text == "yes") {
         				state = 1
-        				sendTextMessage(sender, "Great!", token)
+        				causeSelection(sender)
         			} else if (text == "no") {
         				state = 2
-        				causeSelection(sender)
+        				sendTextMessage(sender, "Great!", token)
         			}
 
 	        		break
 
-        		case (2):
+	        	// Do you want to learn more about moral trades?
+        		case (1):
         			if (text == "gun") {
         				state = 000
         				sendTextMessage(sender, "gun", token)
@@ -155,23 +156,18 @@ function causeSelection(sender) {
             "payload": {
                 "template_type": "generic",
                 "elements": [{
-                    "title": "Cause Selection",
-                    "subtitle": "What cause do you feel most passionate about?",
+                    "title": "Hello",
+                    "subtitle": "Do you want to make a moral trade?",
                     "buttons": [{
                         "type": "postback",
-                        "title": "Gun rights",
-                        "payload": "gun",
+                        "title": "Yes",
+                        "payload": "yes",
 
                     }, 
                     {
                         "type": "postback",
-                        "title": "Abortion",
-                        "payload": "abortion",
-                    },
-                    {
-                        "type": "postback",
-                        "title": "Presidential Elections",
-                        "payload": "president",
+                        "title": "No",
+                        "payload": "no",
                     }],
                 }]
             }
