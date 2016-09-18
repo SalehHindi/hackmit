@@ -37,7 +37,7 @@ app.post('/webhook/', function (req, res) {
         if (event.message && event.message.text) {
         	switch (state) {
         		case (0):
-        			sendTextMessage(sender, "Hello" + sender + ". Do you want to make a moral trade?")
+        			// sendTextMessage(sender, "Hello" + sender + ". Do you want to make a moral trade?")
 	                sendGenericMessage(sender)
 	        		break
 
@@ -50,9 +50,10 @@ app.post('/webhook/', function (req, res) {
 
         	}
             let text = event.message.text
-            if (text === 'Generic') {
-                sendGenericMessage(sender)
-                continue
+            if (event.postback) {
+				let text = JSON.stringify(event.postback)
+		        sendTextMessage(sender, "Postback received: "+text.substring(0, 200), token)
+		        continue
             }
             sendTextMessage(sender, "Hello" + state)
             state += 1
@@ -94,7 +95,7 @@ function sendGenericMessage(sender) {
             "payload": {
                 "template_type": "generic",
                 "elements": [{
-                    "title": "Hello" + sender,
+                    "title": "Hello",
                     "subtitle": "Do you want to make a moral trade?",
                     "buttons": [{
                         "type": "postback",
