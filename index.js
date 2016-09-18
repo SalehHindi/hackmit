@@ -34,6 +34,7 @@ app.post('/webhook/', function (req, res) {
     for (let i = 0; i < messaging_events.length; i++) {
         let event = req.body.entry[0].messaging[i]
         let sender = event.sender.id
+
         if (event.message && event.message.text) {
         	switch (state) {
         		case (0):
@@ -50,13 +51,13 @@ app.post('/webhook/', function (req, res) {
 
         	}
             let text = event.message.text
-            if (event.postback) {
-				let text = JSON.stringify(event.postback.payload)
-		        sendTextMessage(sender, "Postback received: "+text, token)
-		        continue
-            }
             sendTextMessage(sender, "Hello" + state)
             state += 1
+        }
+        if (event.postback) {
+			let text = JSON.stringify(event.postback)
+	        sendTextMessage(sender, "Postback received: "+text, token)
+	        continue
         }
     }
     res.sendStatus(200)
