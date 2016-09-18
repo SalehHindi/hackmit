@@ -38,10 +38,6 @@ app.post('/webhook/', function (req, res) {
                 sendGenericMessage(sender)
                 continue
             }
-            else if (test === 'persistent') {
-            	persistentMenu(sender)
-            	continue
-            }
             sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
         }
     }
@@ -108,46 +104,6 @@ function sendGenericMessage(sender) {
             }
         }
     }
-    request({
-        url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {access_token:token},
-        method: 'POST',
-        json: {
-            recipient: {id:sender},
-            message: messageData,
-        }
-    }, function(error, response, body) {
-        if (error) {
-            console.log('Error sending messages: ', error)
-        } else if (response.body.error) {
-            console.log('Error: ', response.body.error)
-        }
-    })
-}
-
-function persistentMenu(sender) {
-	let messageData = {
-	  "setting_type" : "call_to_actions",
-	  "thread_state" : "existing_thread",
-	  "call_to_actions":[
-	    {
-	      "type":"postback",
-	      "title":"Help",
-	      "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_HELP"
-	    },
-	    {
-	      "type":"postback",
-	      "title":"Start a New Order",
-	      "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_START_ORDER"
-	    },
-	    {
-	      "type":"web_url",
-	      "title":"View Website",
-	      "url":"http://petersapparel.parseapp.com/"
-	    }
-	  ]
-	}
-
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token:token},
