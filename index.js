@@ -40,7 +40,7 @@ app.post('/webhook/', function (req, res) {
             sendGenericMessage(sender)
         }
         if (event.postback) {
-			let text = event.postback.payload
+			let text = JSON.stringify(event.postback.payload)
 	        sendTextMessage(sender, "Postback received: "+text, token)
 
         	switch (state) {
@@ -49,7 +49,7 @@ app.post('/webhook/', function (req, res) {
         			if (text == "yes") {
         				state = 1
         				causeSelection(sender)
-			            sendTextMessage(sender, "Hello there yes")
+			            sendTextMessage(sender, "Hello there")
         			} else if (text == "no") {
         				state = 2
         				sendTextMessage(sender, "Great!", token)
