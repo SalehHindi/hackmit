@@ -37,11 +37,11 @@ app.post('/webhook/', function (req, res) {
 
         if (event.message && event.message.text) {
             let text = event.message.text
-            sendGenericMessage(sender, "Hello", "Do you want to make a moral trade?")
+            sendGenericMessage(sender)
         }
         if (event.postback) {
 			let text = event.postback.payload
-	        // sendTextMessage(sender, "Postback received: "+text, token)
+	        sendTextMessage(sender, "Postback received: "+text, token)
 
         	switch (state) {
         		// Do you want to do a moral trade?
@@ -49,9 +49,11 @@ app.post('/webhook/', function (req, res) {
         			if (text == "yes") {
         				state = 1
         				causeSelection(sender)
+			            sendTextMessage(sender, "Hello there yes")
         			} else if (text == "no") {
         				state = 2
-        				sendGenericMessage(sender, "Moral Trading", "Do you want to learn more about moral trades?")
+        				sendTextMessage(sender, "Great!", token)
+			            sendTextMessage(sender, "Hello there no")
         			}
 
 	        		break
@@ -71,13 +73,15 @@ app.post('/webhook/', function (req, res) {
 	
 	        	// Do you want to learn more about moral trades?
         		case 2:
-        			if (text == "yes") {
-        				state = 0
-        				sendTextMessage(sender, "ok here is some info", token)
-        				sendTextMessage(sender, "attachment", token)
-        			} else if (text == "no") {
+        			if (text == "gun") {
         				state = 000
-        				sendTextMessage(sender, "ok bye bye", token)
+        				sendTextMessage(sender, "gun", token)
+        			} else if (text == "abortion") {
+        				state = 000
+        				sendTextMessage(sender, "abortion", token)
+        			} else if (text == "president") {
+        				state = 000
+        				sendTextMessage(sender, "president", token)
         			}
 
         		default:
@@ -118,15 +122,15 @@ function sendTextMessage(sender, text) {
 }
 
 // A type of message to send
-function sendGenericMessage(sender, title, subtitle) {
+function sendGenericMessage(sender) {
     let messageData = {
         "attachment": {
             "type": "template",
             "payload": {
                 "template_type": "generic",
                 "elements": [{
-                    "title": title,
-                    "subtitle": subtitle,
+                    "title": "Hello",
+                    "subtitle": "Do you want to make a moral trade?",
                     "buttons": [{
                         "type": "postback",
                         "title": "Yes",
