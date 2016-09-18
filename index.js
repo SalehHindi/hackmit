@@ -35,6 +35,20 @@ app.post('/webhook/', function (req, res) {
         let event = req.body.entry[0].messaging[i]
         let sender = event.sender.id
         if (event.message && event.message.text) {
+        	switch (state) {
+        		case (0):
+        			sendTextMessage(sender, "Hello" + event.sender + ". Do you want to make a moral trade?")
+	                sendGenericMessage(sender)
+	        		break
+
+        		case (2):
+		   			sendTextMessage(sender, "Hello" + event.sender + ". Do you want to make a moral trade?")
+	                sendGenericMessage(sender)
+	        		break
+
+        		break
+
+        	}
             let text = event.message.text
             if (text === 'Generic') {
                 sendGenericMessage(sender)
@@ -82,24 +96,17 @@ function sendGenericMessage(sender) {
                 "elements": [{
                     "title": "First card",
                     "subtitle": "Element #1 of an hscroll",
-                    "image_url": "http://messengerdemo.parseapp.com/img/rift.png",
+                    // "image_url": "http://messengerdemo.parseapp.com/img/rift.png",
                     "buttons": [{
-                        "type": "web_url",
-                        "url": "https://www.messenger.com",
-                        "title": "web url"
-                    }, {
+                        "type": "postback",
+                        "title": "web url",
+                        "payload": "Payload for second element in a generic bubble",
+
+                    }, 
+                    {
                         "type": "postback",
                         "title": "Postback",
                         "payload": "Payload for first element in a generic bubble",
-                    }],
-                }, {
-                    "title": "Second card",
-                    "subtitle": "Element #2 of an hscroll",
-                    "image_url": "http://messengerdemo.parseapp.com/img/gearvr.png",
-                    "buttons": [{
-                        "type": "postback",
-                        "title": "Postback",
-                        "payload": "Payload for second element in a generic bubble",
                     }],
                 }]
             }
