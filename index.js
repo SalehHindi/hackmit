@@ -41,7 +41,7 @@ app.post('/webhook/', function (req, res) {
         }
         if (event.postback) {
 			let text = event.postback.payload
-	        sendTextMessage(sender, "Postback received: "+text, token)
+	        sendTextMessage(sender, "Postback received: "+state, token)
 
         	switch (state) {
         		// Do you want to do a moral trade?
