@@ -53,7 +53,7 @@ app.post('/webhook/', function (req, res) {
         			} else if (text == "no") {
         				state = 2
         				sendTextMessage(sender, "Great!", token)
-			            sendTextMessage(sender, "Hello there")
+			            sendTextMessage(sender, "Hello there no")
         			}
 
 	        		break
@@ -73,7 +73,7 @@ app.post('/webhook/', function (req, res) {
 
         		default:
         			state = 0
-		            sendTextMessage(sender, "Hello there")
+		            sendTextMessage(sender, "Hello there !")
 
         	}
 
