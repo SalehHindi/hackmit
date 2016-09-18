@@ -40,20 +40,20 @@ app.post('/webhook/', function (req, res) {
             sendGenericMessage(sender)
         }
         if (event.postback) {
-			let text = JSON.stringify(event.postback.payload)
+			let text = event.postback.payload
 	        sendTextMessage(sender, "Postback received: "+text, token)
 
         	switch (state) {
         		// Do you want to do a moral trade?
         		case 0:
-        			if (text) {
+        			if (text == "yes") {
         				state = 1
         				causeSelection(sender)
-			            sendTextMessage(sender, "Hello there")
+			            sendTextMessage(sender, "Hello there yes")
         			} else if (text == "no") {
         				state = 2
         				sendTextMessage(sender, "Great!", token)
-			            sendTextMessage(sender, "Hello there")
+			            sendTextMessage(sender, "Hello there no")
         			}
 
 	        		break
