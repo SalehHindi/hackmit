@@ -41,6 +41,7 @@ app.post('/webhook/', function (req, res) {
                 continue
             }
             sendTextMessage(sender, "Hello" + state)
+            state += 1
         }
     }
     res.sendStatus(200)
