@@ -125,8 +125,8 @@ function sendGenericMessage(sender, titles, subtitles) {
             "payload": {
                 "template_type": "generic",
                 "elements": [{
-                    "title": title,
-                    "subtitle": subtitle,
+                    "title": titles,
+                    "subtitle": subtitles,
                     "buttons": [{
                         "type": "postback",
                         "title": "Yes",
