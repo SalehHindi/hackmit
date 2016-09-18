@@ -118,7 +118,7 @@ function sendTextMessage(sender, text) {
 }
 
 // A type of message to send
-function sendGenericMessage(sender, title, subtitle) {
+function sendGenericMessage(sender, titles, subtitles) {
     let messageData = {
         "attachment": {
             "type": "template",
@@ -130,13 +130,12 @@ function sendGenericMessage(sender, title, subtitle) {
                     "buttons": [{
                         "type": "postback",
                         "title": "Yes",
-                        "payload": "yes",
-
+                        "payload": "yes"
                     }, 
                     {
                         "type": "postback",
                         "title": "No",
-                        "payload": "no",
+                        "payload": "no"
                     }],
                 }]
             }
@@ -171,13 +170,13 @@ function causeSelection(sender) {
                     "buttons": [{
                         "type": "postback",
                         "title": "Yes",
-                        "payload": "yes",
+                        "payload": "yes"
 
                     }, 
                     {
                         "type": "postback",
                         "title": "No",
-                        "payload": "no",
+                        "payload": "no"
                     }],
                 }]
             }
