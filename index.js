@@ -37,7 +37,6 @@ app.post('/webhook/', function (req, res) {
 
         if (event.message && event.message.text) {
             let text = event.message.text
-            sendTextMessage(sender, "Hello" + state)
             sendGenericMessage(sender)
         }
         if (event.postback) {
@@ -72,6 +71,7 @@ app.post('/webhook/', function (req, res) {
 
         		default:
         			state = 0
+		            sendTextMessage(sender, "Hello there")
 
         	}
 
