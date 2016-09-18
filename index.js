@@ -163,15 +163,21 @@ function causeSelection(sender) {
                     "subtitle": "Do you want to make a moral trade?",
                     "buttons": [{
                         "type": "postback",
-                        "title": "Yes",
+                        "title": "Gun Rights",
                         "payload": "yes",
 
                     }, 
                     {
                         "type": "postback",
-                        "title": "No",
-                        "payload": "no",
-                    }],
+                        "title": "Abortion Rights",
+                        "payload": "abortion",
+                    }
+                    {
+                        "type": "postback",
+                        "title": "Presidential Election",
+                        "payload": "president",
+                    }
+                    ],
                 }]
             }
         }
