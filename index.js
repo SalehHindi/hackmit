@@ -6,6 +6,8 @@ const request = require('request')
 const app = express()
 const token = "EAAPaEOjibZBkBAKOX0gacDUedVsZCZBw2CUfwda6Gm11HkKnxZANfp9zu5to3ab4U2lnd7qVpxTldZBJ42Kdm2mIsik55SUy23MkhZCgTtTD4PDaSIS1o5gAtnQ5oZBeEKvguhm3fRBZCsYZAZB8e8MOOKAJTD83LhpLoVgYvsoBcpXQZDZD"
 
+var state = 0
+
 app.set('port', (process.env.PORT || 5000))
 
 // Process application/x-www-form-urlencoded
@@ -34,8 +36,8 @@ app.post('/webhook/', function (req, res) {
         let sender = event.sender.id
         if (event.message && event.message.text) {
             let text = event.message.text
-            if (text === 'Generic') {
-                sendGenericMessage(sender)
+            if (text === 'hi') {
+                sendTextMessage(sender, "Hello, do you want to make a trade?" + state)
                 continue
             }
             else if (test === 'persistent') {
