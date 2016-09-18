@@ -37,11 +37,11 @@ app.post('/webhook/', function (req, res) {
 
         if (event.message && event.message.text) {
             let text = event.message.text
-            sendGenericMessage(sender)
+            sendGenericMessage(sender, "Hello", "Do you want to make a moral trade?")
         }
         if (event.postback) {
 			let text = event.postback.payload
-	        sendTextMessage(sender, "Postback received: "+text, token)
+	        // sendTextMessage(sender, "Postback received: "+text, token)
 
         	switch (state) {
         		// Do you want to do a moral trade?
@@ -49,27 +49,36 @@ app.post('/webhook/', function (req, res) {
         			if (text == "yes") {
         				state = 1
         				causeSelection(sender)
-			            sendTextMessage(sender, "Hello there yes")
         			} else if (text == "no") {
         				state = 2
-        				sendTextMessage(sender, "Great!", token)
-			            sendTextMessage(sender, "Hello there no")
+        				sendGenericMessage(sender, "Moral Trading", "Do you want to learn more about moral trades?")
         			}
 
 	        		break
 
+	        	// Cause Selection
+        		case 1:
+        			if (text == "gun") {
+        				state = 000
+        				sendTextMessage(sender, "gun", token)
+        			} else if (text == "abortion") {
+        				state = 000
+        				sendTextMessage(sender, "abortion", token)
+        			} else if (text == "president") {
+        				state = 000
+        				sendTextMessage(sender, "president", token)
+        			}
+	
 	        	// Do you want to learn more about moral trades?
-        		// case (1):
-        		// 	if (text == "gun") {
-        		// 		state = 000
-        		// 		sendTextMessage(sender, "gun", token)
-        		// 	} else if (text == "abortion") {
-        		// 		state = 000
-        		// 		sendTextMessage(sender, "abortion", token)
-        		// 	} else if (text == "president") {
-        		// 		state = 000
-        		// 		sendTextMessage(sender, "president", token)
-        		// 	}
+        		case 2:
+        			if (text == "yes") {
+        				state = 0
+        				sendTextMessage(sender, "ok here is some info", token)
+        				sendTextMessage(sender, "attachment", token)
+        			} else if (text == "no") {
+        				// state = 000
+        				sendTextMessage(sender, "ok bye bye", token)
+        			}
 
         		default:
         			state = 0
@@ -109,15 +118,15 @@ function sendTextMessage(sender, text) {
 }
 
 // A type of message to send
-function sendGenericMessage(sender) {
+function sendGenericMessage(sender, title, subtitle) {
     let messageData = {
         "attachment": {
             "type": "template",
             "payload": {
                 "template_type": "generic",
                 "elements": [{
-                    "title": "Hello",
-                    "subtitle": "Do you want to make a moral trade?",
+                    "title": title,
+                    "subtitle": subtitle,
                     "buttons": [{
                         "type": "postback",
                         "title": "Yes",
