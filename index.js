@@ -159,8 +159,8 @@ function causeSelection(sender) {
             "payload": {
                 "template_type": "generic",
                 "elements": [{
-                    "title": "Hello",
-                    "subtitle": "Do you want to make a moral trade?",
+                    "title": "Cause Selection",
+                    "subtitle": "Select the cause you feel the most passionate about",
                     "buttons": [{
                         "type": "postback",
                         "title": "Gun Rights",
@@ -171,13 +171,12 @@ function causeSelection(sender) {
                         "type": "postback",
                         "title": "Abortion Rights",
                         "payload": "abortion",
-                    }
+                    },
                     {
                         "type": "postback",
                         "title": "Presidential Election",
                         "payload": "president",
-                    }
-                    ],
+                    }],
                 }]
             }
         }
