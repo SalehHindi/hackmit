@@ -49,9 +49,11 @@ app.post('/webhook/', function (req, res) {
         			if (text == "yes") {
         				state = 1
         				causeSelection(sender)
+			            sendTextMessage(sender, "Hello there")
         			} else if (text == "no") {
         				state = 2
         				sendTextMessage(sender, "Great!", token)
+			            sendTextMessage(sender, "Hello there")
         			}
 
 	        		break
