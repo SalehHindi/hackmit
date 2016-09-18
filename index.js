@@ -46,7 +46,7 @@ app.post('/webhook/', function (req, res) {
 
         	switch (state) {
         		// Do you want to do a moral trade?
-        		case (0):
+        		case 0:
         			if (text == "yes") {
         				state = 1
         				causeSelection(sender)
