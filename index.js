@@ -37,12 +37,12 @@ app.post('/webhook/', function (req, res) {
         if (event.message && event.message.text) {
         	switch (state) {
         		case (0):
-        			sendTextMessage(sender, "Hello" + event.sender + ". Do you want to make a moral trade?")
+        			sendTextMessage(sender, "Hello" + sender + ". Do you want to make a moral trade?")
 	                sendGenericMessage(sender)
 	        		break
 
         		case (2):
-		   			sendTextMessage(sender, "Hello" + event.sender + ". Do you want to make a moral trade?")
+		   			// sendTextMessage(sender, "Hello" + event.sender + ". Do you want to make a moral trade?")
 	                sendGenericMessage(sender)
 	        		break
 
@@ -94,18 +94,17 @@ function sendGenericMessage(sender) {
             "payload": {
                 "template_type": "generic",
                 "elements": [{
-                    "title": "First card",
-                    "subtitle": "Element #1 of an hscroll",
-                    // "image_url": "http://messengerdemo.parseapp.com/img/rift.png",
+                    "title": "Hello" + sender,
+                    "subtitle": "Do you want to make a moral trade?",
                     "buttons": [{
                         "type": "postback",
-                        "title": "web url",
+                        "title": "Yes",
                         "payload": "Payload for second element in a generic bubble",
 
                     }, 
                     {
                         "type": "postback",
-                        "title": "Postback",
+                        "title": "No",
                         "payload": "Payload for first element in a generic bubble",
                     }],
                 }]
