@@ -36,27 +36,45 @@ app.post('/webhook/', function (req, res) {
         let sender = event.sender.id
 
         if (event.message && event.message.text) {
-        	switch (state) {
-        		case (0):
-        			// sendTextMessage(sender, "Hello" + sender + ". Do you want to make a moral trade?")
-	                sendGenericMessage(sender)
-	        		break
-
-        		case (2):
-		   			// sendTextMessage(sender, "Hello" + event.sender + ". Do you want to make a moral trade?")
-	                sendGenericMessage(sender)
-	        		break
-
-        		break
-
-        	}
             let text = event.message.text
-            sendTextMessage(sender, "Hello" + state)
+            // sendTextMessage(sender, "Hello" + state)
             state += 1
         }
         if (event.postback) {
 			let text = JSON.stringify(event.postback.payload)
 	        sendTextMessage(sender, "Postback received: "+text, token)
+
+        	switch (state) {
+        		// Do you want to do a moral trade?
+        		case (0):
+        			if (text == "yes") {
+        				state = 1
+        				sendTextMessage(sender, "Great!", token)
+        			} else if (text == "no") {
+        				state = 2
+        				causeSelection(sender)
+        			}
+
+	        		break
+
+        		case (2):
+        			if (text == "gun") {
+        				state = 000
+        				sendTextMessage(sender, "gun", token)
+        			} else if (text == "abortion") {
+        				state = 000
+        				sendTextMessage(sender, "abortion", token)
+        			} else if (text == "president") {
+        				state = 000
+        				sendTextMessage(sender, "president", token)
+        			}
+
+	        		break
+
+        		break
+
+        	}
+
 	        continue
         }
     }
@@ -108,6 +126,52 @@ function sendGenericMessage(sender) {
                         "type": "postback",
                         "title": "No",
                         "payload": "no",
+                    }],
+                }]
+            }
+        }
+    }
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: {access_token:token},
+        method: 'POST',
+        json: {
+            recipient: {id:sender},
+            message: messageData,
+        }
+    }, function(error, response, body) {
+        if (error) {
+            console.log('Error sending messages: ', error)
+        } else if (response.body.error) {
+            console.log('Error: ', response.body.error)
+        }
+    })
+}
+
+function causeSelection(sender) {
+    let messageData = {
+        "attachment": {
+            "type": "template",
+            "payload": {
+                "template_type": "generic",
+                "elements": [{
+                    "title": "Cause Selection",
+                    "subtitle": "What cause do you feel most passionate about?",
+                    "buttons": [{
+                        "type": "postback",
+                        "title": "Gun rights",
+                        "payload": "gun",
+
+                    }, 
+                    {
+                        "type": "postback",
+                        "title": "Abortion",
+                        "payload": "abortion",
+                    },
+                    {
+                        "type": "postback",
+                        "title": "Presidential Elections",
+                        "payload": "president",
                     }],
                 }]
             }
