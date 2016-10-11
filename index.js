@@ -37,16 +37,22 @@ app.post('/webhook/', function (req, res) {
 
         if (event.message && event.message.text) {
             let text = event.message.text
+            sendTextMessage(sender, "Processing")
             // sendGenericMessage(sender)
         }
         if (event.postback) {
-			let text = event.postback.payload
-	        // sendTextMessage(sender, "Postback received: " + state + ": ", token)
+            let text = event.postback.payload
+            // sendTextMessage(sender, "Postback received: " + state + ": ", token)
 
-        	switch (state) {
+            switch (state) {
                 case 0:
                     sendTextMessage(sender, "State 0")
                     state = 1
+                    break
+
+                case 1:
+                    sendTextMessage(sender, "State 1")
+                    state = 2
                     break
 
         		// // Response to "Do you want to do a moral trade?"
