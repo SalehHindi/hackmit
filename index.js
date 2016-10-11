@@ -44,7 +44,7 @@ app.post('/webhook/', function (req, res) {
 	        sendTextMessage(sender, "Postback received: " + state + ": ", token)
 
         	switch (state) {
-        		// Do you want to do a moral trade?
+        		// What cause do you care about?
         		case 0:
         			if (text == "yes") {
         				state = 1
@@ -58,26 +58,27 @@ app.post('/webhook/', function (req, res) {
 
 	        		break
 
-	        	// Do you want to learn more about moral trades?
+	        	// How do you feel about your cause?
         		case 1:
         			if (text == "gun") {
-        				state = 0
+        				state = 2
         				sendTextMessage(sender, "gun", token)
         			} else if (text == "abortion") {
-        				state = 0
+        				state = 2
         				sendTextMessage(sender, "abortion", token)
         			} else if (text == "president") {
-        				state = 0
+        				state = 2
         				sendTextMessage(sender, "president", token)
         			}
 
         			break
 
                 // How do you feel about your cause?
-                case 2:
-                    if (text == ) {
-
-                    }
+                // case 2:
+                    // if (text == ) {
+                        
+                    // }
+                    // break
 
         		default:
         			state = 0
