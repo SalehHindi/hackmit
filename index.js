@@ -41,7 +41,7 @@ app.post('/webhook/', function (req, res) {
         }
         if (event.postback) {
 			let text = event.postback.payload
-	        sendTextMessage(sender, "Postback received: "+state, token)
+	        sendTextMessage(sender, "Postback received: " + state + ": ", token)
 
         	switch (state) {
         		// Do you want to do a moral trade?
@@ -73,6 +73,12 @@ app.post('/webhook/', function (req, res) {
 
         			break
 
+                // How do you feel about your cause?
+                case 2:
+                    if (text == ) {
+
+                    }
+
         		default:
         			state = 0
 		            sendTextMessage(sender, "Hello there !")
@@ -90,7 +96,7 @@ app.listen(app.get('port'), function() {
     console.log('running on port', app.get('port'))
 })
 
-// A type of message to send
+// Respond with some text
 function sendTextMessage(sender, text) {
     let messageData = { text:text }
     request({
@@ -110,7 +116,7 @@ function sendTextMessage(sender, text) {
     })
 }
 
-// A type of message to send
+// Do you want to make a moral trade?
 function sendGenericMessage(sender) {
     let messageData = {
         "attachment": {
@@ -152,6 +158,7 @@ function sendGenericMessage(sender) {
     })
 }
 
+// Cause selection
 function causeSelection(sender) {
     let messageData = {
         "attachment": {
