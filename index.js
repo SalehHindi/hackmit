@@ -37,52 +37,57 @@ app.post('/webhook/', function (req, res) {
 
         if (event.message && event.message.text) {
             let text = event.message.text
-            sendGenericMessage(sender)
+            // sendGenericMessage(sender)
         }
         if (event.postback) {
 			let text = event.postback.payload
-	        sendTextMessage(sender, "Postback received: " + state + ": ", token)
+	        // sendTextMessage(sender, "Postback received: " + state + ": ", token)
 
         	switch (state) {
-        		// What cause do you care about?
-        		case 0:
-        			if (text == "yes") {
-        				state = 1
-        				causeSelection(sender)
-			            sendTextMessage(sender, "Hello there yes")
-        			} else if (text == "no") {
-        				state = 2
-        				sendTextMessage(sender, "Great!", token)
-			            sendTextMessage(sender, "Hello there noooo")
-        			}
+                case 0:
+                    sendTextMessage(sender, "State 0")
+                    state = 1
+                    break
 
-	        		break
+        		// // Response to "Do you want to do a moral trade?"
+        		// case 1:
+        		// 	if (text == "yes") {
+        		// 		state = 1
+        		// 		causeSelection(sender)
+			       //      sendTextMessage(sender, "Hello there yes")
+        		// 	} else if (text == "no") {
+        		// 		state = 2
+        		// 		sendTextMessage(sender, "Great!", token)
+			       //      sendTextMessage(sender, "Hello there noooo")
+        		// 	}
 
-	        	// How do you feel about your cause?
-        		case 1:
-        			if (text == "gun") {
-        				state = 2
-        				sendTextMessage(sender, "gun", token)
-        			} else if (text == "abortion") {
-        				state = 2
-        				sendTextMessage(sender, "abortion", token)
-        			} else if (text == "president") {
-        				state = 2
-        				sendTextMessage(sender, "president", token)
-        			}
+	        	// 	break
 
-        			break
+	        	// // How do you feel about your cause?
+        		// case 2:
+        		// 	if (text == "gun") {
+        		// 		state = 2
+        		// 		sendTextMessage(sender, "gun", token)
+        		// 	} else if (text == "abortion") {
+        		// 		state = 2
+        		// 		sendTextMessage(sender, "abortion", token)
+        		// 	} else if (text == "president") {
+        		// 		state = 2
+        		// 		sendTextMessage(sender, "president", token)
+        		// 	}
 
-                // How do you feel about your cause?
-                // case 2:
-                    // if (text == ) {
-                        
-                    // }
-                    // break
+        		// 	break
+
+          //       // How do you feel about your cause?
+          //       // case 3:
+          //           // if (text == ) {
+
+          //           // }
+          //           // break
 
         		default:
         			state = 0
-		            sendTextMessage(sender, "Hello there !")
+		            sendTextMessage(sender, "Im sorry I didnt catch that. State set to 0")
 
         	}
 
