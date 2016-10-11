@@ -43,7 +43,7 @@ app.post('/webhook/', function (req, res) {
         }
         if (event.postback) {
             let text = event.postback.payload
-            // sendTextMessage(sender, "Postback received: " + state + ": ", token)
+            sendTextMessage(sender, "Postback Triggered " + state + ": ", token)
 
             switch (state) {
                 case 0:
