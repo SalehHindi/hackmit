@@ -38,12 +38,11 @@ app.post('/webhook/', function (req, res) {
 
         if (event.message && event.message.text) {
             let text = event.message.text
-            sendTextMessage(sender, "STAGING")
             // sendGenericMessage(sender)
         }
         if (event.postback) {
             let text = event.postback.payload
-            sendTextMessage(sender, "Postback Triggered " + state + ": ", token)
+            // sendTextMessage(sender, "Postback received: " + state + ": ", token)
 
             switch (state) {
                 case 0:
