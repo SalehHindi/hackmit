@@ -1,14 +1,16 @@
-Moral Trader -- A messaging app meant to facilitate "moral trades"
+# Moral Trader -- A messaging app meant to facilitate "moral trades"
+http://m.me/MoralTrader
+
 This was initially built as part of the HackMIT competition but it was not completed. A big shout out to Kyu Chang, Audrey Lin, and Kevin Liao for helping me brainstorm this idea.
 
-Problem
+# Problem
 When I was at Effective Altruism Global I read a paper about so called moral trades. The idea is that if person A feels very for a cause and person B feels very against a cause, they are likely to donate to charities that might have the effect of cancelling each other out. For example consider someone donating to an organization promising to tighten gun control in the US and someone else donating to an organization with the opposite effect. These people might be willing to agree to donate to a third cause they both care about in order to have a greater impact. Moral Trader is meant to facilitate those trades.
 
-Solution
-The idea is to make a humanistic chat bot in Messenger that figures out what causes someone feels strongly about. When another person feels strongly but in the opposite way about a cause, it messages them both and tries to engage a trade. 
+# Solution
+The idea is to make a humanistic chat bot in Messenger that figures out what causes someone feels strongly about. When another person feels strongly but in the opposite way about a cause, it messages them both and tries to engage a trade. The bot, whose profile picture is of a classy old man and whose cover photo is a French villa, is supposed to have an exquisite personality. They are supposed to be kind and hopefully humorous. 
 
-Implementation
+# Implementation
 I recently learned about AWS Lambda, Amazon's solution for serverless apps. I decided it would be best to implement this app in Lambda for cost reasons and speed. The idea behind Lambda is that you give it a function to run and a trigger and Amazon runs your function only in reponse to the trigger. This is ideal for a chat bot because the bot only needs to run after someone messages the bot. In terms of cost, I am only running a function a discrete number of times instead of having a server run continuously. I previously tried implementing this in Heroku and although the first dyno is free, Amazon promises the first million lambda calls to be free. So while both implementations are free for now, if this app scales, it will require more processors in Heroku but not in Lambda for the first million messages. There was also a dramatic decrease in response time when moving to Lambda.
 
-Takeaway
+# Takeaway
 Overall I had a very positive experience coding a chat bot with Lambda. With Lambda, I get very quick response times in the chat, making for a better user experience and it was all very cheap. Additionally imagining a chat bot as a state diagram made programming it very intuitive. I am planning to store all user responses because if I get enough users, the sequence of states can be studied via Markov Chains or recurrent neural networks (I believe the underlying mathematics is the same). 
