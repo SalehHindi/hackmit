@@ -35,11 +35,10 @@ exports.handler = (event, context, callback) => {
       // If a user sends text
       if (messagingEvent.message && messagingEvent.message.text) {
         var text = messagingEvent.message.text; 
-        console.log("Receive a message: " + text);
         
         if (messagingEvent.message.text == "moral trade") {
-            sendButtons(sender, "Confirm", "Do you want to start a moral trade?", ["Yes", "No"]);
             state = "MoralTradeStarted";
+            sendButtons(sender, "Confirm", "Do you want to start a moral trade?", ["Yes", "No"]);
         }
 
         callback(null, "Done")
@@ -55,8 +54,8 @@ exports.handler = (event, context, callback) => {
         if (state == "MoralTradeStarted") {
           switch (messagingEvent.postback.payload) {
             case "Yes":
-              sendTextMessage(sender, "Show Cause Selection");
               state = "CauseSelection";
+              sendTextMessage(sender, "Show Cause Selection");
               sendButtons(sender, 
                           "Cause Selection", 
                           "Select the cause you feel the most passionate about", 
@@ -65,7 +64,8 @@ exports.handler = (event, context, callback) => {
               break
                       
             case "No":
-                  
+              sendTextMessage(sender, "No1");
+              quickReplies(sender);
               break
                     
             default:
@@ -76,16 +76,20 @@ exports.handler = (event, context, callback) => {
           switch (messagingEvent.postback.payload) {
             case "Gun Rights":
               sendTextMessage(sender, "Gun Control Selected");
+              sendButtons(sender, 
+                          "Alignment Selection",
+                          "How do you feel about this cause?",
+                          ["Very For", "Neutral", "Very Against"]
+                          );
               state = "CauseSelected";
-              alignmentSelection(sender);
               break
 
             case "Abortion Rights":
-
+              sendTextMessage(sender, "Abortion Rights");
               break
 
             case "The Presidential Election":
-
+              sendTextMessage(sender, "The Presential Election");
               break
 
             default:
@@ -93,9 +97,31 @@ exports.handler = (event, context, callback) => {
           }
 
         } else if (state == "CauseSelected") {
-          sendTextMessage(sender, "Very For");
-          state = "AlignmentSelected";
-          confirmTrade(sender);
+          sendTextMessage(sender, "Very For1");
+          
+          switch (messagingEvent.postback.payload) {
+            case "Very For":
+              state = "AlignmentSelected";
+              sendTextMessage(sender, "Very For2");
+              sendButtons(sender, 
+                          "Confirm Trade",
+                          "Do you want to make a moral trade?",
+                          ["Yes", "No"]
+                          );
+              break
+
+            case "Neutral":
+              sendTextMessage(sender, "Neutral");
+              break
+
+            case "Very Against":
+              sendTextMessage(sender, "Very Against");
+              break
+
+            default:
+
+          }
+
         }
       }
       
@@ -201,97 +227,32 @@ function sendButtons(sender, title, subtitle, buttons) {
   req.end();
 }
 
-function alignmentSelection(sender) {
+function quickReplies(sender) {
   var json = {
     recipient: {id: sender},
-    message: {
-        "attachment": {
-            "type": "template",
-            "payload": {
-                "template_type": "generic",
-                "elements": [{
-                    "title": "Alignment Selection",
-                    "subtitle": "How do you feel about this cause?",
-                    "buttons": [{
-                        "type": "postback",
-                        "title": "Very For",
-                        "payload": "veryfor",
-                    }, 
-                    {
-                        "type": "postback",
-                        "title": "Neutral",
-                        "payload": "neutral",
-                    },
-                    {
-                        "type": "postback",
-                        "title": "Very Against",
-                        "payload": "veryagainst",
-                    }],
-                }]
-            }
+    "message":{
+      "text":"Pick a color:",
+      "quick_replies":[
+        {
+          "content_type":"text",
+          "title":"Red",
+          "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_RED"
+        },
+        {
+          "content_type":"text",
+          "title":"Green",
+          "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN"
         }
+      ]
     }
   };
 
-  var body = JSON.stringify(json);
-
-  var path = '/v2.6/me/messages?access_token=' + PAGE_TOKEN;
-
-  var options = {
-    host: "graph.facebook.com",
-    path: path,
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'}
-  };
-
-  var callback = function(response) {
-
-    var str = ''
-    response.on('data', function (chunk) {
-      str += chunk;
-    });
-
-    response.on('end', function () {
- 
-    });
-  }
-
-  var req = https.request(options, callback);
-  req.on('error', function(e) {
-    console.log('problem with request: '+ e);
-  });
- 
-  req.write(body);
-  req.end();
-}
-
-function confirmTrade(sender) {
-  var json = {
-    recipient: {id: sender},
-    message: {
-        "attachment": {
-            "type": "template",
-            "payload": {
-                "template_type": "generic",
-                "elements": [{
-                    "title": "Confirm Trade",
-                    "subtitle": "It looks like you are very for gun control. Do you want to trade with someone who is very against gun control?",
-                    "buttons": [{
-                        "type": "postback",
-                        "title": "Yes",
-                        "payload": "yes",
-
-                    }, 
-                    {
-                        "type": "postback",
-                        "title": "No",
-                        "payload": "no",
-                    }],
-                }]
-            }
-        }
-    },
-  };
+  // for (var i = 0; i < buttons.length; i++) {
+  //   json.message.attachment.payload.elements[0].buttons.push({"type": "postback", 
+  //                                                             "title": buttons[i], 
+  //                                                             "payload": buttons[i]}
+  //                                                           );
+  // }
 
   var body = JSON.stringify(json);
 
@@ -324,3 +285,4 @@ function confirmTrade(sender) {
   req.write(body);
   req.end();
 }
+
