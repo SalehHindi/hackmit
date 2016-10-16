@@ -13,6 +13,7 @@ Implementation
 I recently learned about AWS Lambda, Amazon's solution for serverless apps. I decided it would be best to implement this app in Lambda over a traditional server model such as Heroku or Elastic Cloud Compute (EC2) for lower cost and increased speed. The idea behind Lambda is that you give it a function to run and a trigger and Amazon runs your function only in reponse to the trigger. This is ideal for a chat bot because the bot only needs to run after someone messages the bot. In terms of cost, I am only running my function a discrete number of times so it doesn't make sense to have a server run continuously. I previously tried implementing this in Heroku and although the first dyno is free, Amazon promises the first million Lambda calls to be free. So while both implementations are free for now, if this app scales, it will require more processors in Heroku but will remain fre in Lambda for the first million messages. There was also a dramatic decrease in response time when moving to Lambda.
 
 The app works via 3 steps
+
 1. An array called `inputs` is populated with all the input the user sends.
 2. An intent and a confidence number between 0 and 1 is created from each input. An intent is the next state the app should move to.
 3. The intent with the highest confidence is chosen and the app moves to that state.

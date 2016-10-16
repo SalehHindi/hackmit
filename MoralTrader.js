@@ -302,4 +302,3 @@ function quickReplies(sender, titleText, quickReplies) {
   req.write(body);
   req.end();
 }
-
