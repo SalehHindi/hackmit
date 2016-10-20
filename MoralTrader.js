@@ -3,7 +3,6 @@
   var https = require('https');
   var PAGE_TOKEN = "EAAPaEOjibZBkBAPRV91xJyQzh4hCdo1MD1QIwZBgMkNEI2ah9FQObF9QTvSJ5ulVaLRX5L5Jdvr1tGL5S895dQX77BwDR2UbTxbZBgZBw3gSA1yEIXujMYDWobzDlhs76NHuZCfklMEN06ghXRWzttlTLWxrahcRFfRn0ZAuZCizgZDZD";
   var VERIFY_TOKEN = "my_awesome_token";
-  var state = "";
 
   exports.handler = (event, context, callback) => {
 
@@ -38,39 +37,47 @@
 
         // If anything happens
         if (messagingEvent.message) {
-            sendTextMessage(sender, "Event")
+            sendTextMessage(sender, "Event");
         }
         
         // If a user sends text
         if (messagingEvent.message && messagingEvent.message.text) {
           var text = messagingEvent.message.text; 
-         
-          sendTextMessage(sender, "Text Received") 
+          sendTextMessage(sender, "Text Received");
           if (messagingEvent.message.text == "moral trade") {
-              state = "MoralTradeStarted";
-              // sendButtons(sender, "Confirm", "Do you want to start a moral trade?", ["Yes", "No"]);
-              quickReplies(sender, "Do you want to start a moral trade?", ["Yes", "No"]);
+              sendButtons(sender, 
+                          "Confirm", 
+                          "Do you want to start a moral trade?", 
+                          ["Yes", "No"],
+                          "MoralTradeStarted"
+                          );
+              // quickReplies(sender, "Do you want to start a moral trade?", ["Yes", "No"]);
           }
+        
 
-          callback(null, "Done")
+          callback(null, "Done");
         }
         
         // If a user clicks a button
         if (messagingEvent.postback) {
-          // Where all the logic for button goes
-          sendTextMessage(sender, "State: " + state);
-          sendTextMessage(sender, messagingEvent.postback.payload);
-          sendTextMessage(sender, "Postbacktriggered");
-            
-          if (state == "MoralTradeStarted") {
-            switch (messagingEvent.postback.payload) {
+          var currentState = messagingEvent.postback.payload.split(".")[0];
+          var answer = messagingEvent.postback.payload.split(".")[1];
+          sendTextMessage(sender, "State: " + currentState);
+          sendTextMessage(sender, "Answer: " + answer);
+
+          // sendTextMessage(sender, "State: " + currentState);
+          // sendTextMessage(sender, answer);
+          // sendTextMessage(sender, "Postbacktriggered");
+          
+          if (currentState == "MoralTradeStarted") {
+            switch (answer) {
               case "Yes":
-                state = "CauseSelection";
                 sendTextMessage(sender, "Show Cause Selection");
                 sendButtons(sender, 
                             "Cause Selection", 
                             "Select the cause you feel the most passionate about", 
-                            ["Gun Rights", "Abortion Rights", "The Presidential Election"]
+                            ["Gun Rights", "Abortion Rights", "The Presidential Election"],
+                             "CauseSelection"
                             );
                 break
                         
@@ -83,16 +90,16 @@
                         
             }
 
-          } else if (state == "CauseSelection") {
-            switch (messagingEvent.postback.payload) {
+          } else if (currentState == "CauseSelection") {
+            switch (answer) {
               case "Gun Rights":
                 sendTextMessage(sender, "Gun Control Selected");
                 sendButtons(sender, 
                             "Alignment Selection",
                             "How do you feel about this cause?",
-                            ["Very For", "Neutral", "Very Against"]
+                            ["Very For", "Neutral", "Very Against"],
+                             "CauseSelected"
                             );
-                state = "CauseSelected";
                 break
 
               case "Abortion Rights":
@@ -107,17 +114,17 @@
 
             }
 
-          } else if (state == "CauseSelected") {
+          } else if (currentState == "CauseSelected") {
             sendTextMessage(sender, "Very For1");
             
-            switch (messagingEvent.postback.payload) {
+            switch (answer) {
               case "Very For":
-                state = "AlignmentSelected";
                 sendTextMessage(sender, "Very For2");
                 sendButtons(sender, 
                             "Confirm Trade",
                             "Do you want to make a moral trade?",
-                            ["Yes", "No"]
+                            ["Yes", "No"],
+                             "AlignmentSelected"
                             );
                 break
 
@@ -187,7 +194,7 @@
     req.end();
   }
 
-  function sendButtons(sender, title, subtitle, buttons) {
+  function sendButtons(sender, title, subtitle, buttons, state) {
     var json = {
       recipient: {id: sender},
       message: {
@@ -208,7 +215,7 @@
     for (var i = 0; i < buttons.length; i++) {
       json.message.attachment.payload.elements[0].buttons.push({"type": "postback", 
                                                                 "title": buttons[i], 
-                                                                "payload": buttons[i]}
+                                                                "payload": state + "." + buttons[i]}
                                                               );
     }
 
