@@ -26,6 +26,8 @@
         var messagingEvent = messagingEvents[i];
         var sender = messagingEvent.sender.id;
         
+        setGreetingText(sender);
+
         ////////////////////////
         // The goal is to have 3 sections 
         // 1) Receive Inputs. inputs = an array of all inputs including button and text inputs.
@@ -299,3 +301,42 @@
     req.end();
   }
 
+function setGreetingText(sender) {
+    var json = {
+      setting_type:"greeting",
+      greeting:{
+        "text":"Timeless apparel for the masses."
+      }
+    };
+
+    var body = JSON.stringify(json);
+
+    var path = '/v2.6/me/thread_settings?access_token=' + PAGE_TOKEN;
+
+    var options = {
+      host: "graph.facebook.com",
+      path: path,
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'}
+    };
+
+    var callback = function(response) {
+
+      var str = ''
+      response.on('data', function (chunk) {
+        str += chunk;
+      });
+
+      response.on('end', function () {
+   
+      });
+    }
+
+    var req = https.request(options, callback);
+    req.on('error', function(e) {
+      console.log('problem with request: '+ e);
+    });
+   
+    req.write(body);
+    req.end();
+  }
