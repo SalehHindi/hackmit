@@ -47,31 +47,25 @@
         }
         
 
-
         // If a user sends text
         if (messagingEvent.message && messagingEvent.message.text) {
           var text = messagingEvent.message.text
 
           // If the use clicks a quick reply
           if (messagingEvent.message.quick_reply) {
-            // sendTextMessage(sender, "Payload: " + messagingEvent.message.quick_reply.payload);
             currentState = messagingEvent.message.quick_reply.payload.split(".")[0];
             answer = messagingEvent.message.quick_reply.payload.split(".")[1];
 
+            // sendTextMessage(sender, "Payload: " + messagingEvent.message.quick_reply.payload);
           } 
 
           // How the trade gets initiated
           if (messagingEvent.message.text == "moral trade") {
-              sendButtons(sender, 
-                          "Confirm", 
+              quickReplies(sender, 
                           "Do you want to start a moral trade?", 
                           ["Yes", "No"],
-                          "MoralTradeStarted"
-                          );
-              // quickReplies(sender, "Do you want to start a moral trade?", ["Yes", "No"]);
+                          "MoralTradeStarted");
           }
-        
-
           callback(null, "Done");
         }
         
@@ -85,18 +79,24 @@
           // sendTextMessage(sender, "State: " + currentState);
           // sendTextMessage(sender, answer);
           // sendTextMessage(sender, "Postbacktriggered");
-          
-          // These switch statements need to be outside of Receive Inputs
+        }
+
+        ////////////////////////////////////
+        // Intent Processing
+
+
+        ////////////////////////////////////
+        // State Selection
+
+        if (answer != "") {
           if (currentState == "MoralTradeStarted") {
             switch (answer) {
               case "Yes":
-                sendTextMessage(sender, "Show Cause Selection");
-                sendButtons(sender, 
-                            "Cause Selection", 
-                            "Select the cause you feel the most passionate about", 
-                            ["Gun Rights", "Abortion Rights", "The Presidential Election"],
-                             "CauseSelection"
-                            );
+                // sendTextMessage(sender, "Show Cause Selection");
+                quickReplies(sender,
+                            "Select the cause you feel the most passionate about",
+                            ["Gun Rights", "Abortion Rights"],
+                            "CauseSelection");
                 break
                         
               case "No":
@@ -111,12 +111,11 @@
           } else if (currentState == "CauseSelection") {
             switch (answer) {
               case "Gun Rights":
-                sendTextMessage(sender, "Gun Control Selected");
-                sendButtons(sender, 
-                            "Alignment Selection",
+                // sendTextMessage(sender, "Gun Control Selected");
+                quickReplies(sender, 
                             "How do you feel about this cause?",
                             ["Very For", "Neutral", "Very Against"],
-                             "CauseSelected"
+                            "CauseSelected"
                             );
                 break
 
@@ -133,16 +132,13 @@
             }
 
           } else if (currentState == "CauseSelected") {
-            sendTextMessage(sender, "Very For1");
-            
             switch (answer) {
               case "Very For":
-                sendTextMessage(sender, "Very For2");
                 sendButtons(sender, 
                             "Confirm Trade",
                             "Do you want to make a moral trade?",
                             ["Yes", "No"],
-                             "AlignmentSelected"
+                            "AlignmentSelected"
                             );
                 break
 
@@ -160,14 +156,8 @@
 
           }
         }
-
-        ////////////////////////////////////
-        // Intent Processing
-
-
-        ////////////////////////////////////
-        // State Selection
         
+        ////////////////////////////////////
       }
    
       callback(null, event);
@@ -273,7 +263,7 @@
     var json = {
       recipient: {id: sender},
       "message":{
-        "text": "text",
+        "text": titleText,
         "quick_replies":[]
       }
     };
