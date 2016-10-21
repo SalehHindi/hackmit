@@ -26,6 +26,10 @@
         var messagingEvent = messagingEvents[i];
         var sender = messagingEvent.sender.id;
         
+        // What should the default state be?
+        var answer = "";
+        var currentState = "";
+
         setGreetingText(sender);
 
         ////////////////////////
@@ -39,13 +43,24 @@
 
         // If anything happens
         if (messagingEvent.message) {
-            sendTextMessage(sender, "Event");
+            // sendTextMessage(sender, "Event");
         }
         
+
+
         // If a user sends text
         if (messagingEvent.message && messagingEvent.message.text) {
-          var text = messagingEvent.message.text; 
-          sendTextMessage(sender, "Text Received");
+          var text = messagingEvent.message.text
+
+          // If the use clicks a quick reply
+          if (messagingEvent.message.quick_reply) {
+            // sendTextMessage(sender, "Payload: " + messagingEvent.message.quick_reply.payload);
+            currentState = messagingEvent.message.quick_reply.payload.split(".")[0];
+            answer = messagingEvent.message.quick_reply.payload.split(".")[1];
+
+          } 
+
+          // How the trade gets initiated
           if (messagingEvent.message.text == "moral trade") {
               sendButtons(sender, 
                           "Confirm", 
@@ -62,8 +77,8 @@
         
         // If a user clicks a button
         if (messagingEvent.postback) {
-          var currentState = messagingEvent.postback.payload.split(".")[0];
-          var answer = messagingEvent.postback.payload.split(".")[1];
+          currentState = messagingEvent.postback.payload.split(".")[0];
+          answer = messagingEvent.postback.payload.split(".")[1];
           sendTextMessage(sender, "State: " + currentState);
           sendTextMessage(sender, "Answer: " + answer);
 
@@ -71,6 +86,7 @@
           // sendTextMessage(sender, answer);
           // sendTextMessage(sender, "Postbacktriggered");
           
+          // These switch statements need to be outside of Receive Inputs
           if (currentState == "MoralTradeStarted") {
             switch (answer) {
               case "Yes":
@@ -253,7 +269,7 @@
     req.end();
   }
 
-  function quickReplies(sender, titleText, quickReplies) {
+  function quickReplies(sender, titleText, quickReplies, state) {
     var json = {
       recipient: {id: sender},
       "message":{
@@ -263,10 +279,10 @@
     };
 
     for (var i = 0; i < quickReplies.length; i++) {
-      json.message.quick_replies.push({"content_type": "text", 
-                                                                "title": quickReplies[i], 
-                                                                "payload": quickReplies[i]}
-                                                              );
+      json.message.quick_replies.push({content_type: "text", 
+                                      title: quickReplies[i], 
+                                      payload: state + "." + quickReplies[i]}
+                                      );
     }
 
     var body = JSON.stringify(json);
@@ -340,3 +356,5 @@ function setGreetingText(sender) {
     req.write(body);
     req.end();
   }
+
+
