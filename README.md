@@ -38,10 +38,45 @@ case "Donation trade":
 ...
 ```
 
+Currently, the next state is selected by:
+```javascript
+...
+else if (currentState == "MoralTrade") {
+	switch (answer) {
+	  case "Yes":
+	    // sendTextMessage(sender, "Show Cause Selection");
+
+	    setTyping(sender, "on");
+	    setTimeout(function(){
+	      quickReplies(sender,
+	                  "Fantastic. Now choose the cause you care most about. And do be honest",
+	                  ["Gun Rights", "Abortion Rights"],
+	                  "CauseSelection");
+	      setTyping(sender, "off");
+	      }, 1500
+	    );
+	    currentState = "CauseSelection"
+	    break
+	            
+	  case "No":
+	    sendTextMessage(sender, "No");
+	    break
+
+	  case "Huh?":
+	    sendTextMessage(sender, "Huh?");
+	    break
+	          
+	  default:
+	            
+	}
+}
+...
+```
+
 Since the conversation can be represented so well by a graph, I'm thinking of encoding the conversation as a list of vertices and graphs like `(Vertex1, Vertex2, displayFunction, edge)`, where a display function is any of the ways Messenger can send information, like a series of buttons, a list of quick replies, plain text. 
 
 An example of this is 
-```
+```javascript
 P1 = ("MoralTrade", "CauseSelection", quickReply, "Yes")
 P2 = ("MoralTrade", "CauseSelection", quickReply, "No") 
 P3 = ("MoralTrade", "CauseSelection", quickReply, "Huh?")
