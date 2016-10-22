@@ -21,7 +21,7 @@ The app works via 3 steps
 2. The intent is determined from the input.
 3. The intent and the current state determine the next state.
 
-The whole conversation can be imagined as a state graph with each vertex representing a state, ie a a message the bot sends, and each edge representing an intent, ie a message the user sends. 
+The whole conversation can be imagined as a state graph with each vertex representing a state, ie a message the bot sends, and each edge representing an intent, ie a message the user sends. 
 
 ![State Diagram of a Donation Trade](http://i.imgur.com/mMFc04b.png "State Diagram of a Donation Trade")
 
@@ -86,4 +86,10 @@ P3 = ("MoralTrade", "CauseSelection", quickReply, "Huh?")
 ```
 
 # Takeaway
-Overall I had a very positive experience coding a chat bot with Lambda. With Lambda, I get very quick response times in the chat, making for a better user experience and it was all very cheap. Additionally imagining a chat bot as a state diagram made programming it very intuitive. I am planning to store all user responses because if I get enough users, the sequence of states can be studied via Markov Chains or recurrent neural networks (I believe the underlying mathematics is the same). 
+Overall I had a very positive experience coding a chat bot with Lambda. With Lambda, I get very quick response times in the chat, making for a better user experience and it was all very cheap. Additionally imagining a chat bot as a state diagram made programming it very intuitive. 
+
+The next step is to store the user responses and message users when they have been matched with another user of opposite interests. 
+
+The final step will be to hook up the chatbot to Messenger's payment system to start collecting donations.
+
+Please feel free to email me at shindi@haverford.edu for questions, comments, concerns.
