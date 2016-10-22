@@ -74,7 +74,7 @@
 
         // This would be a good use case for wit.ai but it'll be O(n) efficient to do it this way
 
-        var answer = "";
+        var answer = userInput;
         if (userInput != "") {
           switch (userInput) {
             case "moral trade":
@@ -95,71 +95,71 @@
 
               break
 
-        //     case "No":
-        //     // case "":
-        //     // case "":
-        //     // case "":
-        //     // case "":
-        //       answer = "No";
+            case "No":
+            case "no":
+            case "n":
+            case "nope":
+            case "Nope":
+              answer = "No";
             
-        //       break
+              break
 
-        //     case "Guns":
-        //     // case "":
-        //     // case "":
-        //     // case "":
-        //     // case "":
-        //       answer = "Gun Rights";
+            case "Gun Rights":
+            case "Guns":
+            case "guns":
+            case "gun":
+            // case "":
+              answer = "Gun Rights";
 
-        //       break
+              break
 
-        //     case "Abortions":
-        //     // case "":
-        //     // case "":
-        //     // case "":
-        //     // case "":
-        //       answer = "Abortion Rights";
+            case "Abortion Rights":
+            case "abortions":
+            // case "":
+            // case "":
+            // case "":
+              answer = "Abortion Rights";
 
-        //       break
+              break
 
-        //     case "Elections":
-        //     // case "":
-        //     // case "":
-        //     // case "":
-        //     // case "":
-        //       answer = "Presidential Elections";
+            case "Elections":
+            // case "":
+            // case "":
+            // case "":
+            // case "":
+              answer = "Presidential Elections";
 
-        //       break
+              break
 
-        //     case "Very For":
-        //     // case "":
-        //     // case "":
-        //     // case "":
-        //     // case "":
-        //       answer = "Very For"
+            case "Very For":
+            // case "":
+            // case "":
+            // case "":
+            // case "":
+              answer = "Very For"
 
-        //       break
+              break
 
-        //     case "Neutral":
-        //     // case "":
-        //     // case "":
-        //     // case "":
-        //     // case "":
-        //       answer = "Neutral"
+            case "Neutral":
+            // case "":
+            // case "":
+            // case "":
+            // case "":
+              answer = "Neutral"
 
-        //       break
+              break
 
-        //     case "Very Against":
-        //     // case "":
-        //     // case "":
-        //     // case "":
-        //     // case "":
-        //       answer = "Very Against"
+            case "Very Against":
+            // case "":
+            // case "":
+            // case "":
+            // case "":
+              answer = "Very Against"
 
-        //       break
+              break
 
             default:
-              answer = "00000000000000000"
+              // answer = "00000000000000000"
           }
         }
 
@@ -183,6 +183,7 @@
                   setTyping(sender, "off");
                   }, 2000
                 );
+                currentState = "MoralTradeStarted";
                 break
             }
                                             
@@ -200,6 +201,7 @@
                   setTyping(sender, "off");
                   }, 1500
                 );
+                currentState = "CauseSelection"
                 break
                         
               case "No":
@@ -224,7 +226,8 @@
                               );
                   setTyping(sender, "off");
                   }, 1500
-                );             
+                ); 
+                currentState = "CauseSelected"           
                 break
 
               case "Abortion Rights":
@@ -248,6 +251,7 @@
                             ["Yes", "No"],
                             "AlignmentSelected"
                             );
+                currentState = "AlignmentSelected"
                 break
 
               case "Neutral":
@@ -259,6 +263,8 @@
                 break
 
               default:
+                sendTextMessage(sender, "Im sorry, I didnt catch that. Can you retype your message?");
+
 
             }
 
