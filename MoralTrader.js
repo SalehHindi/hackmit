@@ -177,8 +177,8 @@
                 setTyping(sender, "on");
                 setTimeout(function(){
                   quickReplies(sender, 
-                              "Do you want to start a moral trade?", 
-                              ["Yes", "No"],
+                              "Hello. Care to do a moral trade?", 
+                              ["Yes", "No", "Huh?"],
                               "MoralTradeStarted");
                   setTyping(sender, "off");
                   }, 2000
@@ -195,7 +195,7 @@
                 setTyping(sender, "on");
                 setTimeout(function(){
                   quickReplies(sender,
-                              "Select the cause you feel the most passionate about",
+                              "Fantastic. Now choose the cause you care most about. And do be honest",
                               ["Gun Rights", "Abortion Rights"],
                               "CauseSelection");
                   setTyping(sender, "off");
@@ -206,7 +206,10 @@
                         
               case "No":
                 sendTextMessage(sender, "No1");
-                quickReplies(sender, "Drop the baaaase", ["Gun Rights", "nosir"]);
+                break
+
+              case "Huh?":
+                sendTextMessage(sender, "Huh?");
                 break
                       
               default:
@@ -220,7 +223,7 @@
                 setTyping(sender, "on");
                 setTimeout(function(){
                   quickReplies(sender, 
-                              "How do you feel about this cause?",
+                              "Extraordinary choice. Tell me, how do you really feel about it?",
                               ["Very For", "Neutral", "Very Against"],
                               "CauseSelected"
                               );
@@ -245,12 +248,20 @@
           } else if (currentState == "CauseSelected") {
             switch (answer) {
               case "Very For":
-                sendButtons(sender, 
-                            "Confirm Trade",
-                            "Do you want to make a moral trade?",
-                            ["Yes", "No"],
-                            "AlignmentSelected"
-                            );
+                setTyping(sender, "on");
+                setTimeout(function(){
+                  sendTextMessage(sender, "Very good. Lets proceed.")
+                  sendButtons(sender, 
+                              "Confirm Trade",
+                              "Do you want to post the trade?",
+                              ["Yes", "No"],
+                              "AlignmentSelected"
+                              );
+                  setTyping(sender, "off");
+                  }, 1000
+                ); 
+
+
                 currentState = "AlignmentSelected"
                 break
 
@@ -263,9 +274,18 @@
                 break
 
               default:
-                sendTextMessage(sender, "Im sorry, I didnt catch that. Can you retype your message?");
+                sendTextMessage(sender, "You have outwitted me! Please, please, reframe your answer.");
 
+            }
 
+          } else if (currentState == "TradePosted") {
+            sendTextMessage(sender, "♞♚♝♛♟♜")
+            switch (answer) {
+              case "Yes":
+                sendTextMessage(sender, "♞♚♝♛♟♜")
+                break
+
+              default:
             }
 
           }
@@ -448,3 +468,5 @@ function setGreetingText(sender) {
     req.end();
 
   }
+
+  //♞♚♝♛♟♜
