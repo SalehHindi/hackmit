@@ -72,17 +72,17 @@
         ////////////////////////////////////
         // Intent Processing
 
-        // This would be a good use case for wit.ai but it'll be O(n) efficient to do it this way
+        // This would be a good use case for wit.ai
 
         var answer = userInput;
         if (userInput != "") {
           switch (userInput) {
-            case "moral trade":
-            case "mt":
-            case "Moral Trade":
+            case "donation trade":
+            case "dt":
+            case "Donation Trade":
             case "Trade":
-            case "Moral trade":
-              answer = "Moral Trade";
+            case "Donation trade":
+              answer = "Donation Trade";
             
               break
 
@@ -163,7 +163,7 @@
           }
         }
 
-        // var answer = "Moral Trade"
+        // var answer = "Donation Trade"
 
         ////////////////////////////////////
         // State Selection
@@ -173,21 +173,21 @@
         if (answer != "") {
           if (currentState == "") {
             switch (answer) {
-              case "Moral Trade":
+              case "Donation Trade":
                 setTyping(sender, "on");
                 setTimeout(function(){
                   quickReplies(sender, 
-                              "Hello. Care to do a moral trade?", 
+                              "Hello. Care to do a donation trade?", 
                               ["Yes", "No", "Huh?"],
-                              "MoralTradeStarted");
+                              "donationTradeStarted");
                   setTyping(sender, "off");
                   }, 2000
                 );
-                currentState = "MoralTradeStarted";
+                currentState = "donationTradeStarted";
                 break
             }
                                             
-          } else if (currentState == "MoralTradeStarted") {
+          } else if (currentState == "donationTradeStarted") {
             switch (answer) {
               case "Yes":
                 // sendTextMessage(sender, "Show Cause Selection");
