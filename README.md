@@ -2,7 +2,7 @@
 
 http://m.me/MoralTrader
 
-A messaging app meant to facilitate donation trading
+A messaging bot to facilitate donation trading.
 
 This was initially built as part of the HackMIT competition but it was not completed. A big shout out to Kyu Chang, Audrey Lin, and Kevin Liao for helping me brainstorm this idea.
 
