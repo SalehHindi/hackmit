@@ -20,7 +20,7 @@ The app works via 3 steps
 
 The whole conversation can be imagined as a state graph with each vertex representing a state, ie a a message the bot sends, and each edge representing an intent, ie a message the user sends. 
 
-STATE DIAGRAM  
+![State Diagram of a Donation Trade](http://i.imgur.com/mMFc04b.png "State Diagram of a Donation Trade")
 
 To handle the possibility of multiple different user inputs like "yes", "yup", "Yes", "y", etc currently the code takes the raw user input and filters down to a base case as follows
 
@@ -40,7 +40,10 @@ case "Donation trade":
 
 Since the conversation can be represented so well by a graph, I'm thinking of encoding the conversation as a list of vertices and graphs like `(Vertex1, Vertex2, displayFunction, edge)`, where a display function is any of the ways Messenger can send information, like a series of buttons, a list of quick replies, plain text. 
 
-An example of this is `P1 = ("MoralTrade", "CauseSelection", quickReply, "Yes")`, `P2 = ("MoralTrade", "CauseSelection", quickReply, "No")`, `P3 = P1 = ("MoralTrade", "CauseSelection", quickReply, "Huh?")`
+An example of this is 
+`P1 = ("MoralTrade", "CauseSelection", quickReply, "Yes")`
+`P2 = ("MoralTrade", "CauseSelection", quickReply, "No")` 
+`P3 = ("MoralTrade", "CauseSelection", quickReply, "Huh?")`
 
 # Takeaway
 Overall I had a very positive experience coding a chat bot with Lambda. With Lambda, I get very quick response times in the chat, making for a better user experience and it was all very cheap. Additionally imagining a chat bot as a state diagram made programming it very intuitive. I am planning to store all user responses because if I get enough users, the sequence of states can be studied via Markov Chains or recurrent neural networks (I believe the underlying mathematics is the same). 
