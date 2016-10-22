@@ -294,26 +294,6 @@
       method: 'POST',
       headers: {'Content-Type': 'application/json'}
     };
-
-    var callback = function(response) {
-
-      var str = ''
-      response.on('data', function (chunk) {
-        str += chunk;
-      });
-
-      response.on('end', function () {
-   
-      });
-    }
-
-    var req = https.request(options, callback);
-    req.on('error', function(e) {
-      console.log('problem with request: '+ e);
-    });
-   
-    req.write(body);
-    req.end();
   }
 
   function sendButtons(sender, title, subtitle, buttons, state) {
@@ -352,25 +332,7 @@
       headers: {'Content-Type': 'application/json'}
     };
 
-    var callback = function(response) {
-
-      var str = ''
-      response.on('data', function (chunk) {
-        str += chunk;
-      });
-
-      response.on('end', function () {
-   
-      });
-    }
-
-    var req = https.request(options, callback);
-    req.on('error', function(e) {
-      console.log('problem with request: '+ e);
-    });
-   
-    req.write(body);
-    req.end();
+    httpRequestHelper(body, options)
   }
 
   function quickReplies(sender, titleText, quickReplies, state) {
@@ -440,25 +402,7 @@ function setGreetingText(sender) {
       headers: {'Content-Type': 'application/json'}
     };
 
-    var callback = function(response) {
-
-      var str = ''
-      response.on('data', function (chunk) {
-        str += chunk;
-      });
-
-      response.on('end', function () {
-   
-      });
-    }
-
-    var req = https.request(options, callback);
-    req.on('error', function(e) {
-      console.log('problem with request: '+ e);
-    });
-   
-    req.write(body);
-    req.end();
+    httpRequestHelper(body, options)
   }
 
 
@@ -479,6 +423,10 @@ function setGreetingText(sender) {
       headers: {'Content-Type': 'application/json'}
     };
 
+    httpRequestHelper(body, options)
+  }
+
+  function httpRequestHelper(body, options) {
     var callback = function(response) {
 
       var str = ''
@@ -498,5 +446,5 @@ function setGreetingText(sender) {
    
     req.write(body);
     req.end();
-  }
 
+  }
