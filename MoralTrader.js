@@ -3,6 +3,48 @@
   var https = require('https');
   var PAGE_TOKEN = "EAAPaEOjibZBkBAPRV91xJyQzh4hCdo1MD1QIwZBgMkNEI2ah9FQObF9QTvSJ5ulVaLRX5L5Jdvr1tGL5S895dQX77BwDR2UbTxbZBgZBw3gSA1yEIXujMYDWobzDlhs76NHuZCfklMEN06ghXRWzttlTLWxrahcRFfRn0ZAuZCizgZDZD";
   var VERIFY_TOKEN = "my_awesome_token";
+  var causes = [ 
+    {
+      title: "Gun Rights", 
+      subtitle: "The right for people to own arms.", 
+      buttons: [
+        {
+          type: "web_url",
+          url: "https://petersfancybrownhats.com",
+          title: "Placeholder Button"
+        }]
+    },
+    {
+      title: "Abortion Rights", 
+      subtitle: "The right to freely have an abortion.", 
+      buttons: [
+        {
+          type: "web_url",
+          url: "https://petersfancybrownhats.com",
+          title: "Placeholder Button"
+        }]
+    },
+    {
+      title: "Presidential Elections", 
+      subtitle: "The US Presidential Election", 
+      buttons: [
+        {
+          type: "web_url",
+          url: "https://petersfancybrownhats.com",
+          title: "Placeholder Button"
+        }]
+    },
+    {
+      title: "Some Other Hot Cause", 
+      subtitle: "The blah blah blah", 
+      buttons: [
+        {
+          type: "web_url",
+          url: "https://petersfancybrownhats.com",
+          title: "Placeholder Button"
+        }]
+    }
+  ]
 
   // Turn this into a function
   exports.handler = (event, context, callback) => {
@@ -163,8 +205,6 @@
           }
         }
 
-        // var answer = "Donation Trade"
-
         ////////////////////////////////////
         // State Selection
 
@@ -318,6 +358,7 @@
     httpRequestHelper(body, options)
   }
   
+  // Called with carousel(sender, causes, "") 
   function carousel(sender, options, state) {
     var json = {
       recipient: { id:sender },
@@ -326,47 +367,18 @@
           type: "template",
           payload: {
             template_type: "generic",
-            elements: [
-              {
-                title: "Welcome to Peter\'s Hats",
-                // item_url:"https://petersfancybrownhats.com",
-                // image_url:"https://petersfancybrownhats.com/company_image.png",
-                subtitle: "We\'ve got the right hat for everyone.",
-                buttons: [
-                  {
-                    type: "web_url",
-                    url: "https://petersfancybrownhats.com",
-                    title: "View Website"
-                  },
-                  {
-                    type: "postback",
-                    title: "Start Chatting",
-                    payload: "DEVELOPER_DEFINED_PAYLOAD"
-                  }              
-                ]
-              },
-              {
-                title: "o Peter\'s Hats",
-                // item_url:"https://petersfancybrownhats.com",
-                // image_url:"https://petersfancybrownhats.com/company_image.png",
-                subtitle: "We\'ve got the right hat for everyone.",
-                buttons: [
-                  {
-                    type: "web_url",
-                    url: "https://petersfancybrownhats.com",
-                    title: "View Website"
-                  },
-                  {
-                    type: "postback",
-                    title: "Start Chatting",
-                    payload: "AA"
-                  }              
-                ]
-              }
-            ]
+            elements: []
           }
         }
       }
+    }
+
+    // Buttons: Buttons will be information about the cause to learn more.
+    // In the future it might be a link to a wikipedia article, infographics, how many people have donated, maybe a way to contact
+    // People who voted a certain way... etc.
+
+    for (var i = 0; i < options.length; i++) {
+      json.message.attachment.payload.elements.push(options[i]);
     }
 
     var body = JSON.stringify(json);
@@ -470,7 +482,7 @@
     req.end();
   }
 
-function setGreetingText(sender) {
+  function setGreetingText(sender) {
     var json = {
       setting_type:"greeting",
       greeting:{
@@ -491,7 +503,6 @@ function setGreetingText(sender) {
 
     httpRequestHelper(body, options)
   }
-
 
   function setTyping(sender, setting) {
     var json = {
@@ -533,7 +544,6 @@ function setGreetingText(sender) {
    
     req.write(body);
     req.end();
-
   }
 
   //♞♚♝♛♟♜
