@@ -6,8 +6,8 @@ A messaging bot to facilitate donation trading.
 
 This was initially built as part of the HackMIT competition but it was not completed. A big shout out to Kyu Chang, Audrey Lin, and Kevin Liao for helping me brainstorm this idea.
 
-# Problem
-When I was at Effective Altruism Global I read a paper about moral trades. The idea is that if person A feels very for a cause and person B feels very against a cause, they are likely to donate to charities that might have the effect of cancelling each other out. For example consider someone donating to an organization promising to tighten gun control in the US and someone else donating to an organization with the opposite effect. These people might be willing to agree to donate to a third cause they both care about in order to have a greater impact. Moral Trader is meant to facilitate these trades.
+# Challenge
+When I attended Effective Altruism Global I read a paper about moral trades. The idea is that if two people feel very strongly but oppositely about a cause, they are liable to donate to charities that might have the effect of cancelling each other out. For if someone donating to an organization promising to tighten gun control in the US and someone else donating to an organization with the opposite effect. These people might be willing to agree to donate to a third cause they both care about in order to have a greater impact. Moral Trader is meant to facilitate these trades.
 
 # Solution
 The idea is to make a chat bot in Messenger that figures out what causes someone feels strongly about. When another person feels strongly but in the opposite way about a cause, it messages them both and tries to engage a trade. The bot, whose profile picture is of a classy old man and whose cover photo is a French villa, is supposed to have an exquisite personality. 
