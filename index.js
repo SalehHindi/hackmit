@@ -1,15 +1,18 @@
-  'use strict';
+  'use strict'
 
-  var redis = require('redis');
+  var redis = require('redis')
   var redisClient = redis.createClient(6379, "ec2-35-161-227-141.us-west-2.compute.amazonaws.com")
-  redisClient.on("connect", function(){console.log('connected');})
+  redisClient.on("connect", function(){console.log('connected')})
 
   var userData = {}
   var currentState = ""
 
-  var https = require('https');
-  var PAGE_TOKEN = "EAAPaEOjibZBkBAPRV91xJyQzh4hCdo1MD1QIwZBgMkNEI2ah9FQObF9QTvSJ5ulVaLRX5L5Jdvr1tGL5S895dQX77BwDR2UbTxbZBgZBw3gSA1yEIXujMYDWobzDlhs76NHuZCfklMEN06ghXRWzttlTLWxrahcRFfRn0ZAuZCizgZDZD";
-  var VERIFY_TOKEN = "my_awesome_token";
+  var https = require('https')
+  var PAGE_TOKEN = "EAAPaEOjibZBkBAPRV91xJyQzh4hCdo1MD1QIwZBgMkNEI2ah9FQObF9QTvSJ5ulVaLRX5L5Jdvr1tGL5S895dQX77BwDR2UbTxbZBgZBw3gSA1yEIXujMYDWobzDlhs76NHuZCfklMEN06ghXRWzttlTLWxrahcRFfRn0ZAuZCizgZDZD"
+  var VERIFY_TOKEN = "my_awesome_token"
+
+  // I could make this leaner with a database of all the causes.
+  // redisClient.get("MoralTrade:CauseLis")
   var causes = [ 
     {
       title: "Gun Rights", 
@@ -58,28 +61,28 @@
 
     // process GET request
     if(event.params && event.params.querystring){
-      var queryParams = event.params.querystring;
+      var queryParams = event.params.querystring
       var rVerifyToken = queryParams['hub.verify_token']
    
       if (rVerifyToken === VERIFY_TOKEN) {
         var challenge = queryParams['hub.challenge']
         callback(null, parseInt(challenge))
       } else{
-        callback(null, 'Error, wrong validation token');
+        callback(null, 'Error, wrong validation token')
       }
    
     // process POST request
     } else{
    
-      var messagingEvents = event.entry[0].messaging;
+      var messagingEvents = event.entry[0].messaging
       for (var i = 0; i < messagingEvents.length; i++) {
-        var messagingEvent = messagingEvents[i];
-        var sender = messagingEvent.sender.id;
+        var messagingEvent = messagingEvents[i]
+        var sender = messagingEvent.sender.id
         
-        var userInput = "";
-        var currentState = "";
+        var userInput = ""
+        var currentState = ""
 
-        setGreetingText(sender);
+        setGreetingText(sender)
 
         ////////////////////////
         // The goal is to have 3 sections 
@@ -92,30 +95,30 @@
 
         // If any event happens
         if (messagingEvent.message) {
-            // sendTextMessage(sender, "Event");
+            // sendTextMessage(sender, "Event")
         }
         
 
         // If a user sends text
         if (messagingEvent.message && messagingEvent.message.text) {
           var text = messagingEvent.message.text
-          userInput = text;
+          userInput = text
 
           // If the user sends text by clicking a quick reply button
           if (messagingEvent.message.quick_reply) {
-            currentState = messagingEvent.message.quick_reply.payload.split(".")[0];
-            userInput = messagingEvent.message.quick_reply.payload.split(".")[1];
+            currentState = messagingEvent.message.quick_reply.payload.split(".")[0]
+            userInput = messagingEvent.message.quick_reply.payload.split(".")[1]
           } 
 
-          callback(null, "Done");
+          callback(null, "Done")
         }
         
         // If a user clicks a button
         if (messagingEvent.postback) {
-          currentState = messagingEvent.postback.payload.split(".")[0];
-          userInput = messagingEvent.postback.payload.split(".")[1];
-          sendTextMessage(sender, "State: " + currentState);
-          sendTextMessage(sender, "Answer: " + userInput);
+          currentState = messagingEvent.postback.payload.split(".")[0]
+          userInput = messagingEvent.postback.payload.split(".")[1]
+          sendTextMessage(sender, "State: " + currentState)
+          sendTextMessage(sender, "Answer: " + userInput)
         }
 
         ////////////////////////////////////
@@ -123,7 +126,7 @@
 
         // This would be a good use case for wit.ai
 
-        var answer = userInput;
+        var answer = userInput
         if (userInput != "") {
           switch (userInput) {
             case "donation trade":
@@ -131,7 +134,7 @@
             case "Donation Trade":
             case "Trade":
             case "Donation trade":
-              answer = "Donation Trade";
+              answer = "Donation Trade"
             
               break
 
@@ -140,7 +143,7 @@
             case "si":
             case "yup":
             case "Yup":
-              answer = "Yes";
+              answer = "Yes"
 
               break
 
@@ -149,7 +152,7 @@
             case "n":
             case "nope":
             case "Nope":
-              answer = "No";
+              answer = "No"
             
               break
 
@@ -158,7 +161,7 @@
             case "guns":
             case "gun":
             // case "":
-              answer = "Gun Rights";
+              answer = "Gun Rights"
 
               break
 
@@ -167,7 +170,7 @@
             // case "":
             // case "":
             // case "":
-              answer = "Abortion Rights";
+              answer = "Abortion Rights"
 
               break
 
@@ -176,7 +179,7 @@
             // case "":
             // case "":
             // case "":
-              answer = "Presidential Elections";
+              answer = "Presidential Elections"
 
               break
 
@@ -227,43 +230,43 @@
                 // redisClient.set("MoralTrade:awaitingMatches", JSON.stringify({sender: sender,
                 //                                                               state: currentState}))
 
-                setTyping(sender, "on");
+                setTyping(sender, "on")
                 setTimeout(function(){
                   quickReplies(sender, 
                               "Hello. Care to do a donation trade?", 
                               ["Yes", "No", "Huh?"],
-                              "donationTradeStarted");
-                  setTyping(sender, "off");
+                              "donationTradeStarted")
+                  setTyping(sender, "off")
                   }, 100
-                );
-                currentState = "donationTradeStarted";
+                )
+                currentState = "donationTradeStarted"
                 break
             }
                                             
           } else if (currentState == "donationTradeStarted") {
             switch (answer) {
               case "Yes":
-                // sendTextMessage(sender, "Show Cause Selection");
+                // sendTextMessage(sender, "Show Cause Selection")
                 redisClient.set("MoralTrade:test", "it works!")
 
-                setTyping(sender, "on");
+                setTyping(sender, "on")
                 setTimeout(function(){
                   quickReplies(sender,
                               "Fantastic. Now choose the cause you care most about. And do be honest",
                               ["Gun Rights", "Abortion Rights"],
-                              "CauseSelection");
-                  setTyping(sender, "off");
+                              "CauseSelection")
+                  setTyping(sender, "off")
                   }, 100
-                );
+                )
                 currentState = "CauseSelection"
                 break
                         
               case "No":
-                sendTextMessage(sender, "No1");
+                sendTextMessage(sender, "No1")
                 break
 
               case "Huh?":
-                sendTextMessage(sender, "Huh?");
+                sendTextMessage(sender, "Huh?")
                 break
                       
               default:
@@ -273,26 +276,26 @@
           } else if (currentState == "CauseSelection") {
             switch (answer) {
               case "Gun Rights":
-                // sendTextMessage(sender, "Gun Control Selected");
-                setTyping(sender, "on");
+                // sendTextMessage(sender, "Gun Control Selected")
+                setTyping(sender, "on")
                 setTimeout(function(){
                   quickReplies(sender, 
                               "Extraordinary choice. Tell me, how do you really feel about it?",
                               ["Very For", "Neutral", "Very Against"],
                               "CauseSelected"
-                              );
-                  setTyping(sender, "off");
+                              )
+                  setTyping(sender, "off")
                   }, 100
-                ); 
+                ) 
                 currentState = "CauseSelected"           
                 break
 
               case "Abortion Rights":
-                sendTextMessage(sender, "Abortion Rights");
+                sendTextMessage(sender, "Abortion Rights")
                 break
 
               case "The Presidential Election":
-                sendTextMessage(sender, "The Presential Election");
+                sendTextMessage(sender, "The Presential Election")
                 break
 
               default:
@@ -304,7 +307,7 @@
               case "Very For":
                 // On this one, first we'd get the record for the person, modify it in program, delete the record, and set a new record.
 
-                setTyping(sender, "on");
+                setTyping(sender, "on")
                 setTimeout(function(){
                   sendTextMessage(sender, "Very good. Lets proceed.")
                   sendButtons(sender, 
@@ -312,25 +315,25 @@
                               "Do you want to post the trade?",
                               ["Yes", "No"],
                               "AlignmentSelected"
-                              );
-                  setTyping(sender, "off");
+                              )
+                  setTyping(sender, "off")
                   }, 100
-                ); 
+                ) 
 
 
                 currentState = "AlignmentSelected"
                 break
 
               case "Neutral":
-                sendTextMessage(sender, "Neutral");
+                sendTextMessage(sender, "Neutral")
                 break
 
               case "Very Against":
-                sendTextMessage(sender, "Very Against");
+                sendTextMessage(sender, "Very Against")
                 break
 
               default:
-                sendTextMessage(sender, "You have outwitted me! Please, please, reframe your answer.");
+                sendTextMessage(sender, "You have outwitted me! Please, please, reframe your answer.")
 
             }
 
@@ -356,26 +359,26 @@
         ////////////////////////////////////
       }
    
-      callback(null, event);
+      callback(null, event)
     }
-  };
+  }
 
   function sendTextMessage(sender, text) {
     var json = {
       recipient: {id: sender},
       message: {text: text},
-    };
+    }
 
-    var body = JSON.stringify(json);
+    var body = JSON.stringify(json)
 
-    var path = '/v2.6/me/messages?access_token=' + PAGE_TOKEN;
+    var path = '/v2.6/me/messages?access_token=' + PAGE_TOKEN
 
     var options = {
       host: "graph.facebook.com",
       path: path,
       method: 'POST',
       headers: {'Content-Type': 'application/json'}
-    };
+    }
 
     httpRequestHelper(body, options)
   }
@@ -400,19 +403,19 @@
     // People who voted a certain way... etc.
 
     for (var i = 0; i < options.length; i++) {
-      json.message.attachment.payload.elements.push(options[i]);
+      json.message.attachment.payload.elements.push(options[i])
     }
 
-    var body = JSON.stringify(json);
+    var body = JSON.stringify(json)
 
-    var path = '/v2.6/me/messages?access_token=' + PAGE_TOKEN;
+    var path = '/v2.6/me/messages?access_token=' + PAGE_TOKEN
 
     var options = {
       host: "graph.facebook.com",
       path: path,
       method: 'POST',
       headers: {'Content-Type': 'application/json'}
-    };
+    }
 
     httpRequestHelper(body, options)
   }
@@ -433,25 +436,25 @@
               }
           }
       },
-    };
+    }
 
     for (var i = 0; i < buttons.length; i++) {
       json.message.attachment.payload.elements[0].buttons.push({"type": "postback", 
                                                                 "title": buttons[i], 
                                                                 "payload": state + "." + buttons[i]}
-                                                              );
+                                                              )
     }
 
-    var body = JSON.stringify(json);
+    var body = JSON.stringify(json)
 
-    var path = '/v2.6/me/messages?access_token=' + PAGE_TOKEN;
+    var path = '/v2.6/me/messages?access_token=' + PAGE_TOKEN
 
     var options = {
       host: "graph.facebook.com",
       path: path,
       method: 'POST',
       headers: {'Content-Type': 'application/json'}
-    };
+    }
 
     httpRequestHelper(body, options)
   }
@@ -463,45 +466,45 @@
         "text": titleText,
         "quick_replies":[]
       }
-    };
+    }
 
     for (var i = 0; i < quickReplies.length; i++) {
       json.message.quick_replies.push({content_type: "text", 
                                       title: quickReplies[i], 
                                       payload: state + "." + quickReplies[i]}
-                                      );
+                                      )
     }
 
-    var body = JSON.stringify(json);
+    var body = JSON.stringify(json)
 
-    var path = '/v2.6/me/messages?access_token=' + PAGE_TOKEN;
+    var path = '/v2.6/me/messages?access_token=' + PAGE_TOKEN
 
     var options = {
       host: "graph.facebook.com",
       path: path,
       method: 'POST',
       headers: {'Content-Type': 'application/json'}
-    };
+    }
 
     var callback = function(response) {
 
       var str = ''
       response.on('data', function (chunk) {
-        str += chunk;
-      });
+        str += chunk
+      })
 
       response.on('end', function () {
    
-      });
+      })
     }
 
-    var req = https.request(options, callback);
+    var req = https.request(options, callback)
     req.on('error', function(e) {
-      console.log('problem with request: '+ e);
-    });
+      console.log('problem with request: '+ e)
+    })
    
-    req.write(body);
-    req.end();
+    req.write(body)
+    req.end()
   }
 
   function setGreetingText(sender) {
@@ -510,18 +513,18 @@
       greeting:{
         "text":"Timeless apparel for the masses."
       }
-    };
+    }
 
-    var body = JSON.stringify(json);
+    var body = JSON.stringify(json)
 
-    var path = '/v2.6/me/thread_settings?access_token=' + PAGE_TOKEN;
+    var path = '/v2.6/me/thread_settings?access_token=' + PAGE_TOKEN
 
     var options = {
       host: "graph.facebook.com",
       path: path,
       method: 'POST',
       headers: {'Content-Type': 'application/json'}
-    };
+    }
 
     httpRequestHelper(body, options)
   }
@@ -530,18 +533,18 @@
     var json = {
       recipient: {id: sender},
       sender_action: "typing_" + setting,
-    };
+    }
 
-    var body = JSON.stringify(json);
+    var body = JSON.stringify(json)
 
-    var path = '/v2.6/me/messages?access_token=' + PAGE_TOKEN;
+    var path = '/v2.6/me/messages?access_token=' + PAGE_TOKEN
 
     var options = {
       host: "graph.facebook.com",
       path: path,
       method: 'POST',
       headers: {'Content-Type': 'application/json'}
-    };
+    }
 
     httpRequestHelper(body, options)
   }
@@ -551,21 +554,21 @@
 
       var str = ''
       response.on('data', function (chunk) {
-        str += chunk;
-      });
+        str += chunk
+      })
 
       response.on('end', function () {
    
-      });
+      })
     }
 
-    var req = https.request(options, callback);
+    var req = https.request(options, callback)
     req.on('error', function(e) {
-      console.log('problem with request: '+ e);
-    });
+      console.log('problem with request: '+ e)
+    })
    
-    req.write(body);
-    req.end();
+    req.write(body)
+    req.end()
   }
 
   //♞♚♝♛♟♜
