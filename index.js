@@ -1,7 +1,10 @@
   'use strict';
 
-  var https = require('https');
   var redis = require('redis');
+  var redisClient = redis.createClient(6379, "ec2-35-161-227-141.us-west-2.compute.amazonaws.com")
+  redisClient.on("connect", function(){console.log('connected');})
+  
+  var https = require('https');
   var PAGE_TOKEN = "EAAPaEOjibZBkBAPRV91xJyQzh4hCdo1MD1QIwZBgMkNEI2ah9FQObF9QTvSJ5ulVaLRX5L5Jdvr1tGL5S895dQX77BwDR2UbTxbZBgZBw3gSA1yEIXujMYDWobzDlhs76NHuZCfklMEN06ghXRWzttlTLWxrahcRFfRn0ZAuZCizgZDZD";
   var VERIFY_TOKEN = "my_awesome_token";
   var causes = [ 
@@ -232,6 +235,7 @@
             switch (answer) {
               case "Yes":
                 // sendTextMessage(sender, "Show Cause Selection");
+                redisClient.set("MoralTrade:test", "it works!")
 
                 setTyping(sender, "on");
                 setTimeout(function(){
