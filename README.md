@@ -21,7 +21,7 @@ The app works via 3 steps
 2. The intent is determined from the input.
 3. The intent and the current state determine the next state.
 
-The whole conversation can be imagined as a state graph with each vertex representing a state, ie a message the bot sends, and each edge representing an intent, ie a message the user sends. 
+The whole conversation can be imagined as a state graph with each vertex representing a state, ie a message the bot sends, and each edge representing an intent, ie a message the user sends. Although this function tries to be as stateless as possible, it is necessary to use a database to store every trade. [Here](https://github.com/SalehHindi/hackmit/blob/master/RedisonEC2.md) is how to get redis working with Moral Trader
 
 ![State Diagram of a Donation Trade](http://i.imgur.com/mMFc04b.png "State Diagram of a Donation Trade")
 
