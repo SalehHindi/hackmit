@@ -3,7 +3,10 @@
   var redis = require('redis');
   var redisClient = redis.createClient(6379, "ec2-35-161-227-141.us-west-2.compute.amazonaws.com")
   redisClient.on("connect", function(){console.log('connected');})
-  
+
+  var userData = {}
+  var currentState = ""
+
   var https = require('https');
   var PAGE_TOKEN = "EAAPaEOjibZBkBAPRV91xJyQzh4hCdo1MD1QIwZBgMkNEI2ah9FQObF9QTvSJ5ulVaLRX5L5Jdvr1tGL5S895dQX77BwDR2UbTxbZBgZBw3gSA1yEIXujMYDWobzDlhs76NHuZCfklMEN06ghXRWzttlTLWxrahcRFfRn0ZAuZCizgZDZD";
   var VERIFY_TOKEN = "my_awesome_token";
@@ -215,9 +218,15 @@
         // sendTextMessage(sender, "Program running")
         console.log("Program Working. currentState: " + currentState + " answer: " + answer)
         if (answer != "") {
+          // userdata = redisClient.get("MoralTrade:awaitingMatches")
+          // currentState = 
+
           if (currentState == "") {
             switch (answer) {
               case "Donation Trade":
+                // redisClient.set("MoralTrade:awaitingMatches", JSON.stringify({sender: sender,
+                //                                                               state: currentState}))
+
                 setTyping(sender, "on");
                 setTimeout(function(){
                   quickReplies(sender, 
@@ -225,7 +234,7 @@
                               ["Yes", "No", "Huh?"],
                               "donationTradeStarted");
                   setTyping(sender, "off");
-                  }, 2000
+                  }, 100
                 );
                 currentState = "donationTradeStarted";
                 break
@@ -244,7 +253,7 @@
                               ["Gun Rights", "Abortion Rights"],
                               "CauseSelection");
                   setTyping(sender, "off");
-                  }, 1500
+                  }, 100
                 );
                 currentState = "CauseSelection"
                 break
@@ -273,7 +282,7 @@
                               "CauseSelected"
                               );
                   setTyping(sender, "off");
-                  }, 1500
+                  }, 100
                 ); 
                 currentState = "CauseSelected"           
                 break
@@ -293,6 +302,8 @@
           } else if (currentState == "CauseSelected") {
             switch (answer) {
               case "Very For":
+                // On this one, first we'd get the record for the person, modify it in program, delete the record, and set a new record.
+
                 setTyping(sender, "on");
                 setTimeout(function(){
                   sendTextMessage(sender, "Very good. Lets proceed.")
@@ -303,7 +314,7 @@
                               "AlignmentSelected"
                               );
                   setTyping(sender, "off");
-                  }, 1000
+                  }, 100
                 ); 
 
 
@@ -323,11 +334,17 @@
 
             }
 
-          } else if (currentState == "TradePosted") {
+          } else if (currentState == "AlignmentSelected") {
             sendTextMessage(sender, "♞♚♝♛♟♜")
             switch (answer) {
               case "Yes":
-                sendTextMessage(sender, "♞♚♝♛♟♜")
+                // Later, when we implement statefulness, I will push name, cause, alignment
+
+
+                redisClient.lpush(["MoralTrade:awaitingMatches", JSON.stringify({name: sender})])
+                sendTextMessage(sender, "♞♚♝♛♟♜Trade Posted♞♚♝♛♟♜")
+
+                // The next state will be match finding and then after that finances...
                 break
 
               default:
