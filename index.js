@@ -4,9 +4,6 @@
   var redisClient = redis.createClient(6379, "ec2-35-161-227-141.us-west-2.compute.amazonaws.com")
   redisClient.on("connect", function(){console.log('connected')})
 
-  var userData = {}
-  var currentState = ""
-
   var https = require('https')
   var PAGE_TOKEN = "EAAPaEOjibZBkBAPRV91xJyQzh4hCdo1MD1QIwZBgMkNEI2ah9FQObF9QTvSJ5ulVaLRX5L5Jdvr1tGL5S895dQX77BwDR2UbTxbZBgZBw3gSA1yEIXujMYDWobzDlhs76NHuZCfklMEN06ghXRWzttlTLWxrahcRFfRn0ZAuZCizgZDZD"
   var VERIFY_TOKEN = "my_awesome_token"
@@ -80,7 +77,6 @@
         var sender = messagingEvent.sender.id
         
         var userInput = ""
-        var currentState = ""
 
         setGreetingText(sender)
 
@@ -106,7 +102,6 @@
 
           // If the user sends text by clicking a quick reply button
           if (messagingEvent.message.quick_reply) {
-            currentState = messagingEvent.message.quick_reply.payload.split(".")[0]
             userInput = messagingEvent.message.quick_reply.payload.split(".")[1]
           } 
 
@@ -115,9 +110,7 @@
         
         // If a user clicks a button
         if (messagingEvent.postback) {
-          currentState = messagingEvent.postback.payload.split(".")[0]
           userInput = messagingEvent.postback.payload.split(".")[1]
-          sendTextMessage(sender, "State: " + currentState)
           sendTextMessage(sender, "Answer: " + userInput)
         }
 
@@ -219,141 +212,162 @@
         // State Selection
 
         // sendTextMessage(sender, "Program running")
-        console.log("Program Working. currentState: " + currentState + " answer: " + answer)
         if (answer != "") {
-          // userdata = redisClient.get("MoralTrade:awaitingMatches")
-          // currentState = 
+          // Get state
+          // sender: 1108136689268764
+          // redisClient.set("MoralTrade:" + sender, JSON.stringify({sender:1108136689268764, state:"", cause: "", alignment: ""}))          
 
-          if (currentState == "") {
-            switch (answer) {
-              case "Donation Trade":
-                // redisClient.set("MoralTrade:awaitingMatches", JSON.stringify({sender: sender,
-                //                                                               state: currentState}))
+          redisClient.get("MoralTrade:" + sender, function(err, reply) {
+            var userData = JSON.parse(reply);
+            var state = userData.state
+            var cause = userData.cause
+            var alignment = userData.alignment
 
-                setTyping(sender, "on")
-                setTimeout(function(){
-                  quickReplies(sender, 
-                              "Hello. Care to do a donation trade?", 
-                              ["Yes", "No", "Huh?"],
-                              "donationTradeStarted")
-                  setTyping(sender, "off")
-                  }, 100
-                )
-                currentState = "donationTradeStarted"
-                break
-            }
-                                            
-          } else if (currentState == "donationTradeStarted") {
-            switch (answer) {
-              case "Yes":
-                // sendTextMessage(sender, "Show Cause Selection")
-                redisClient.set("MoralTrade:test", "it works!")
+            // sendTextMessage(sender, "state::" + state)
+            // sendTextMessage(sender, "cause::" + cause)
+            // sendTextMessage(sender, "answer::" + answer)
+            // sendTextMessage(sender, "alignment::" + alignment)
 
-                setTyping(sender, "on")
-                setTimeout(function(){
-                  quickReplies(sender,
-                              "Fantastic. Now choose the cause you care most about. And do be honest",
-                              ["Gun Rights", "Abortion Rights"],
-                              "CauseSelection")
-                  setTyping(sender, "off")
-                  }, 100
-                )
-                currentState = "CauseSelection"
-                break
+            if (state == "") {
+              switch (answer) {
+                case "Donation Trade":
+                  // redisClient.set("MoralTrade:awaitingMatches", JSON.stringify({sender: sender,
+                  //                                                               state: state}))
+
+                  setTyping(sender, "on")
+                  setTimeout(function(){
+                    quickReplies(sender, 
+                                "Hello. Care to do a donation trade?", 
+                                ["Yes", "No", "Huh?"],
+                                "donationTradeStarted")
+                    setTyping(sender, "off")
+                    }, 100
+                  )
+                  //userData.state = "donationTradeStarted"
+                  state = "donationTradeStarted"
+                  break
+              }
+                                              
+            } else if (state == "donationTradeStarted") {
+              switch (answer) {
+                case "Yes":
+                  // sendTextMessage(sender, "Show Cause Selection")
+                  redisClient.set("MoralTrade:test", "it works!")
+
+                  setTyping(sender, "on")
+                  setTimeout(function(){
+                    quickReplies(sender,
+                                "Fantastic. Now choose the cause you care most about. And do be honest",
+                                ["Gun Rights", "Abortion Rights"],
+                                "CauseSelection")
+                    setTyping(sender, "off")
+                    }, 100
+                  )
+                  //userData.state = "CauseSelection"
+                  state = "CauseSelection"
+                  break
+                          
+                case "No":
+                  sendTextMessage(sender, "No1")
+                  break
+
+                case "Huh?":
+                  sendTextMessage(sender, "Huh?")
+                  break
                         
-              case "No":
-                sendTextMessage(sender, "No1")
-                break
+                default:
+                          
+              }
 
-              case "Huh?":
-                sendTextMessage(sender, "Huh?")
-                break
-                      
-              default:
-                        
+            } else if (state == "CauseSelection") {
+              switch (answer) {
+                case "Gun Rights":
+                  // sendTextMessage(sender, "Gun Control Selected")
+                  setTyping(sender, "on")
+                  setTimeout(function(){
+                    quickReplies(sender, 
+                                "Extraordinary choice. Tell me, how do you really feel about it?",
+                                ["Very For", "Neutral", "Very Against"],
+                                "CauseSelected"
+                                )
+                    setTyping(sender, "off")
+                    }, 100
+                  ) 
+                  state = "CauseSelected" 
+                  cause = "Gun Rights" // ie cause = answer
+                  break
+
+                case "Abortion Rights":
+                  sendTextMessage(sender, "Abortion Rights")
+                  break
+
+                case "The Presidential Election":
+                  sendTextMessage(sender, "The Presential Election")
+                  break
+
+                default:
+
+              }
+
+            } else if (state == "CauseSelected") {
+              switch (answer) {
+                case "Very For":
+                  setTyping(sender, "on")
+                  setTimeout(function(){
+                    sendTextMessage(sender, "Very good. Lets proceed.")
+                    sendButtons(sender, 
+                                "Confirm Trade",
+                                "Do you want to post the trade?",
+                                ["Yes", "No"],
+                                "AlignmentSelected"
+                                )
+                    setTyping(sender, "off")
+                    }, 100
+                  ) 
+
+                  // userData.alignment = "Very For"
+                  state = "AlignmentSelected"
+                  alignment = "Very For" // ie alignment = answer
+                  break
+
+                case "Neutral":
+                  sendTextMessage(sender, "Neutral")
+                  break
+
+                case "Very Against":
+                  sendTextMessage(sender, "Very Against")
+                  break
+
+                default:
+                  sendTextMessage(sender, "You have outwitted me! Please, please, reframe your answer.")
+
+              }
+
+            } else if (state == "AlignmentSelected") {
+              sendTextMessage(sender, "♞♚♝♛♟♜")
+              switch (answer) {
+                case "Yes":
+                  // Later, when we implement statefulness, I will push name, cause, alignment
+
+
+                  redisClient.lpush(["MoralTrade:awaitingMatches", JSON.stringify({name: sender, cause: cause, alignment: alignment})])
+                  sendTextMessage(sender, "♞♚♝♛♟♜Trade Posted♞♚♝♛♟♜")
+
+                  state = "" //Should be MatchFinding
+                  cause = ""
+                  alignment = ""
+
+                  // The next state will be match finding and then after that finances...
+                  break
+
+                default:
+              }
             }
 
-          } else if (currentState == "CauseSelection") {
-            switch (answer) {
-              case "Gun Rights":
-                // sendTextMessage(sender, "Gun Control Selected")
-                setTyping(sender, "on")
-                setTimeout(function(){
-                  quickReplies(sender, 
-                              "Extraordinary choice. Tell me, how do you really feel about it?",
-                              ["Very For", "Neutral", "Very Against"],
-                              "CauseSelected"
-                              )
-                  setTyping(sender, "off")
-                  }, 100
-                ) 
-                currentState = "CauseSelected"           
-                break
+            // sendTextMessage(sender, state)
+            redisClient.set("MoralTrade:" + sender, JSON.stringify({"sender":1108136689268764, "state":state, "cause": cause, "alignment": alignment}))          
 
-              case "Abortion Rights":
-                sendTextMessage(sender, "Abortion Rights")
-                break
-
-              case "The Presidential Election":
-                sendTextMessage(sender, "The Presential Election")
-                break
-
-              default:
-
-            }
-
-          } else if (currentState == "CauseSelected") {
-            switch (answer) {
-              case "Very For":
-                // On this one, first we'd get the record for the person, modify it in program, delete the record, and set a new record.
-
-                setTyping(sender, "on")
-                setTimeout(function(){
-                  sendTextMessage(sender, "Very good. Lets proceed.")
-                  sendButtons(sender, 
-                              "Confirm Trade",
-                              "Do you want to post the trade?",
-                              ["Yes", "No"],
-                              "AlignmentSelected"
-                              )
-                  setTyping(sender, "off")
-                  }, 100
-                ) 
-
-
-                currentState = "AlignmentSelected"
-                break
-
-              case "Neutral":
-                sendTextMessage(sender, "Neutral")
-                break
-
-              case "Very Against":
-                sendTextMessage(sender, "Very Against")
-                break
-
-              default:
-                sendTextMessage(sender, "You have outwitted me! Please, please, reframe your answer.")
-
-            }
-
-          } else if (currentState == "AlignmentSelected") {
-            sendTextMessage(sender, "♞♚♝♛♟♜")
-            switch (answer) {
-              case "Yes":
-                // Later, when we implement statefulness, I will push name, cause, alignment
-
-
-                redisClient.lpush(["MoralTrade:awaitingMatches", JSON.stringify({name: sender})])
-                sendTextMessage(sender, "♞♚♝♛♟♜Trade Posted♞♚♝♛♟♜")
-
-                // The next state will be match finding and then after that finances...
-                break
-
-              default:
-            }
-
-          }
+          });
         }
         
         ////////////////////////////////////
