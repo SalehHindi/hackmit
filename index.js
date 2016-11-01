@@ -365,7 +365,7 @@
             }
 
             // sendTextMessage(sender, state)
-            redisClient.set("MoralTrade:" + sender, JSON.stringify({"sender":1108136689268764, "state":state, "cause": cause, "alignment": alignment}))          
+            redisClient.set("MoralTrade:" + sender, JSON.stringify({"sender": sender, "state": state, "cause": cause, "alignment": alignment}))          
 
           });
         }
