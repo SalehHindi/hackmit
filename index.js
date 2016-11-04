@@ -217,6 +217,7 @@
           // sender: 1108136689268764
           // redisClient.set("MoralTrade:" + sender, JSON.stringify({sender:1108136689268764, state:"", cause: "", alignment: ""}))          
 
+          console.log("Sender: " + sender)
           redisClient.get("MoralTrade:" + sender, function(err, reply) {
             var userData = JSON.parse(reply);
             var state = userData.state
@@ -585,5 +586,5 @@
     req.end()
   }
 
-  //👍 👎
-  //♞♚♝♛♟♜
+  //👍 👎 🤖 ♞♚♝♛♟♜
+  
