@@ -120,6 +120,7 @@ Currently, the next state is selected by:
 if (inList(Object.keys(graph[state]), answer)) {
    var stateVariables = graph[state][answer].f(sender)
 
+   // These variables are written to the database
    state = stateVariables.state
    cause = stateVariables.cause
    alignment = stateVariables.alignment
@@ -127,14 +128,8 @@ if (inList(Object.keys(graph[state]), answer)) {
 ...
 ```
 
-Since the conversation can be represented so well by a graph, I'm thinking of encoding the conversation as a list of vertices and graphs like `(Vertex1, Vertex2, displayFunction, edge)`, where a display function is any of the ways Messenger can send information, like a series of buttons, a list of quick replies, plain text. 
-
-An example of this is 
-```javascript
-P1 = ("MoralTrade", "CauseSelection", quickReply, "Yes")
-P2 = ("MoralTrade", "CauseSelection", quickReply, "No") 
-P3 = ("MoralTrade", "CauseSelection", quickReply, "Huh?")
-```
+# Running
+To run this program on your own Lambda instance, simply upload zipfile.zip to the Lambda console and connect to the Facebook Messenger webhooks. Feel free to reach out if you want help!
 
 # Takeaway
 Overall I had a very positive experience coding a chat bot with Lambda. With Lambda, I get very quick response times in the chat, making for a better user experience and it was all very cheap. Additionally imagining a chat bot as a state diagram made programming it very intuitive. Extending the program just means adding more states and functions to the `graph` variable. It's so easy that using this program as a template I coded a chat bot which helps someone find directions to a place on a map all in an afternoon. 
