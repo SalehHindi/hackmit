@@ -1,6 +1,7 @@
 # Instructions for getting a redis server running on EC2
 
 Note: it would be most cost effective to use DynamoDB on AWS but this method is easier to debug and not very expensive for non production purposes.
+
 The instructions for getting Redis to work are as follows:
 
 1. From a fresh Ubuntu EC2 instance (I use nano) run `sudo apt-get install redis-server`
