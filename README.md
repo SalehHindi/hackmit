@@ -23,7 +23,7 @@ The whole conversation can be imagined as a state graph with each vertex represe
 
 ![State Diagram of a Donation Trade](http://i.imgur.com/mMFc04b.png "State Diagram of a Donation Trade")
 
-The directed graph is stored in the `graph` variable and the semantics is `graph.vertex.nextVertex` or `graph.vertex.f(options)`. Note: in javascript you cannot do `graph."nextState"` but instead must do `graph["nextState"]`.
+The directed graph is stored in the `graph` variable and the semantics is `graph.vertex.nextVertex` or `graph.vertex.f(options)`. Note: in javascript you cannot do `graph."nextState"` but instead must do `graph["nextState"]`. Here are a couple of vertices and edges for the graph:
 
 ```javascript
 var graph = 
