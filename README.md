@@ -101,14 +101,14 @@ To handle the possibility of multiple different user inputs like "yes", "yup", "
 ```javascript
 ...
 switch (userInput) {
-case "donation trade":
-case "dt":
-case "Donation Trade":
-case "Trade":
-case "Donation trade":
-  answer = "Donation Trade";
+	case "donation trade":
+	case "dt":
+	case "Donation Trade":
+	case "Trade":
+	case "Donation trade":
+	  answer = "Donation Trade";
 
-  break
+	  break
 ...
 ```
 
