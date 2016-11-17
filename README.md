@@ -2,7 +2,7 @@
 
 A messaging bot to facilitate donation trading.
 
-This was initially built as part of the HackMIT competition.
+This was initially built as part of the HackMIT competition. The main code is in `index.js`.
 
 # Challenge
 This project is inspired by a paper I read about moral trades. The idea is that if two people feel very strongly but oppositely about a cause, they are liable to donate to charities that might have the effect of cancelling each other out. For example if someone donates to an organization promising to tighten gun control and someone else donates to an organization with the opposite mission, the money donated might not have a very strong effect in either direction. These people might be willing to agree to donate to a third cause they both care about in order to have a greater impact. Moral Trader is meant to facilitate these trades.
@@ -10,7 +10,7 @@ This project is inspired by a paper I read about moral trades. The idea is that 
 # Solution
 The idea is to make a chat bot in Messenger that figures out what causes someone feels strongly about. When another person feels strongly but in the opposite way about a cause, it messages them both and tries to engage a trade. The bot, whose profile picture is of a classy old man and whose cover photo is a French villa, is supposed to have an exquisite personality. 
 
-Implementation
+# Implementation
 I recently learned about AWS Lambda, Amazon's solution for serverless apps. I decided it would be best to implement this app in Lambda over a traditional server model such as Heroku or Elastic Cloud Compute (EC2) for lower cost and increased speed. The idea behind Lambda is that you give it a function to run and a trigger and Amazon runs your function only in reponse to the trigger. This is ideal for a chat bot because the bot only needs to run after someone messages the bot. In terms of cost, I am only running my function a discrete number of times so it doesn't make sense to have a server run continuously. I previously tried implementing this in Heroku and although the first dyno is free, Amazon promises the first million Lambda calls to be free. So while both implementations are free for now, if this app scales, it will require more dynos in Heroku but will remain free in Lambda for the first million messages. There was also a dramatic decrease in response time when moving to Lambda.
 
 The app works via 3 steps
