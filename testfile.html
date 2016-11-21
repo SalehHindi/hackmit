@@ -1,0 +1,122 @@
+<script>
+	var graph = 
+	{"NONE": 
+		{"DonationTrade": {nextVertex: "donationTradeStarted", f: function() {
+		    var stateVariables = {state: "", cause: "", alignment: ""}
+
+		    setTyping(sender, "on")
+		    setTimeout(function(){
+		        quickReplies(sender, 
+		                    "Hello. Care to do a donation trade?", 
+		                    ["Yes", "No", "Huh?"],
+		                    "donationTradeStarted")
+		        setTyping(sender, "off")
+		        }, 100
+		    )
+		    stateVariables.state = "donationTradeStarted"
+
+		    return stateVariables
+		}}
+	    },
+    "donationTradeStarted": 
+    	{"Yes": {nextVertex: "CauseSelection", f: function() {
+			redisClient.set("MoralTrade:test", "it works!")
+
+			setTyping(sender, "on")
+			setTimeout(function(){
+			quickReplies(sender,
+			            "Fantastic. Now choose the cause you care most about. And do be honest",
+			            ["Gun Rights", "Abortion Rights"],
+			            "CauseSelection")
+			setTyping(sender, "off")
+			}, 100
+			)
+			state = "CauseSelection"
+    	}},
+         "No": {nextVertex: "XXXX", f: function() {
+			sendTextMessage(sender, "No1")
+         }},
+         "Huh?": {nextVertex: "XXXX", f: function() {
+			sendTextMessage(sender, "Huh?")
+         }}
+        },
+    "CauseSelection": 
+        {"Gun Rights": {nextVertex: "CauseSelected", f: function() {
+			setTyping(sender, "on")
+			setTimeout(function(){
+			quickReplies(sender, 
+			            "Extraordinary choice. Tell me, how do you really feel about it?",
+			            ["Very For", "Neutral", "Very Against"],
+			            "CauseSelected"
+			            )
+			setTyping(sender, "off")
+			}, 100
+			) 
+			state = "CauseSelected" 
+			cause = "Gun Rights" // ie cause = answer
+        }},
+         "Abortion Rights": {nextVertex: "XXXX", f: function() {
+			sendTextMessage(sender, "Abortion Rights")
+         }}
+        },
+    "CauseSelected": 
+    	{"Very For": {nextVertex: "AlignmentSelected", f: function() {
+			setTyping(sender, "on")
+			setTimeout(function(){
+			sendTextMessage(sender, "Very good. Lets proceed.")
+			sendButtons(sender, 
+			            "Confirm Trade",
+			            "Do you want to post the trade?",
+			            ["Yes", "No"],
+			            "AlignmentSelected"
+			            )
+			setTyping(sender, "off")
+			}, 100
+			) 
+
+			state = "AlignmentSelected"
+			alignment = "Very For" // ie alignment = answer
+    	}},
+         "Neutral": {nextVertex: "XXXX", f: function() {
+			sendTextMessage(sender, "Neutral")
+         }},
+         "Very Against": {nextVertex: "XXXX", f: function() {
+			sendTextMessage(sender, "Very Against")
+         }}
+        },
+    "AlignmentSelected": 
+    	{"Yes": {nextVertex: "XXXX", f: function() {
+			redisClient.lpush(["MoralTrade:awaitingMatches", JSON.stringify({name: sender, cause: cause, alignment: alignment})])
+			sendTextMessage(sender, "♞♚♝♛♟♜Trade Posted♞♚♝♛♟♜")
+
+			state = "" //Should be MatchFinding
+			cause = ""
+			alignment = ""
+
+			// The next state will be match finding and then after that finances...
+    	}}
+        },
+    "CATCHALLSTATE": 
+    	{"CATCHALLANSWER": {nextVertex: "XXXX", f: function() {}}
+	    }
+    }
+         // Object.keys(graph) gets all states
+         // Object.keys(graph.vertex) gets all the edges for that vertex
+
+    function inList(list, el) {
+    	i = 0
+    	while (i < list.length) {
+    		if (list[i] === el) {
+    			return true
+    		}
+    		i += 1
+    	}
+    	return false
+    };
+
+    state = "CauseSelection"
+    answer = "Gun Rights"
+
+
+    graph.donationTradeStarted.Yes.f()
+</script>

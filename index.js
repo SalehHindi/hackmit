@@ -59,15 +59,10 @@
     {"DonationTrade": {nextVertex: "donationTradeStarted", f: function(sender) {
         var stateVariables = {state: "", cause: "", alignment: ""}
 
-        setTyping(sender, "on")
-        setTimeout(function(){
-            quickReplies(sender, 
-                        "Hello. Care to do a donation trade?", 
-                        ["Yes", "No", "Huh?"],
-                        "donationTradeStarted")
-            setTyping(sender, "off")
-            }, 100
-        )
+        quickReplies(sender, 
+                    "Hello. Care to do a donation trade?", 
+                    ["Yes", "No", "Huh?"],
+                    "donationTradeStarted")
         stateVariables.state = "donationTradeStarted"
         return stateVariables
       }}
@@ -75,16 +70,11 @@
   "donationTradeStarted": 
     {"Yes": {nextVertex: "CauseSelection", f: function(sender) {
         var stateVariables = {state: "", cause: "", alignment: ""}
-
-        setTyping(sender, "on")
-        setTimeout(function(){
         quickReplies(sender,
                     "Fantastic. Now choose the cause you care most about. And do be honest",
                     ["Gun Rights", "Abortion Rights"],
                     "CauseSelection")
-        setTyping(sender, "off")
-        }, 100
-        )
+
         stateVariables.state = "CauseSelection"
 
         return stateVariables
@@ -106,16 +96,11 @@
     {"Gun Rights": {nextVertex: "CauseSelected", f: function(sender) {
         var stateVariables = {state: "", cause: "", alignment: ""}
 
-        setTyping(sender, "on")
-        setTimeout(function(){
         quickReplies(sender, 
                     "Extraordinary choice. Tell me, how do you really feel about it?",
                     ["Very For", "Neutral", "Very Against"],
                     "CauseSelected"
                     )
-        setTyping(sender, "off")
-        }, 100
-        ) 
         stateVariables.state = "CauseSelected" 
         stateVariables.cause = "Gun Rights" 
 
@@ -132,19 +117,12 @@
   "CauseSelected": 
     {"Very For": {nextVertex: "AlignmentSelected", f: function(sender) {
         var stateVariables = {state: "", cause: "", alignment: ""}
-
-        setTyping(sender, "on")
-        setTimeout(function(){
-        sendTextMessage(sender, "Very good. Lets proceed.")
         sendButtons(sender, 
                     "Confirm Trade",
                     "Do you want to post the trade?",
                     ["Yes", "No"],
                     "AlignmentSelected"
                     )
-        setTyping(sender, "off")
-        }, 100
-        ) 
 
         stateVariables.state = "AlignmentSelected"
         stateVariables.alignment = "Very For" 
@@ -341,7 +319,6 @@
 
         ////////////////////////////////////
         // State Selection
-
         // sendTextMessage(sender, "Program running")
         if (answer != "") {
           // Get state
@@ -355,24 +332,33 @@
             // If (userData == XXX) { init the values to blank ie ""}
 
             var userData = JSON.parse(reply);
-            // console.log(userData)
+            console.log("USER DATA:" + JSON.stringify(userData))
+
+            // userData = null in the case of a new user using the bot
+            if (userData == null) {
+              userData = {sender: sender, state: "", cause: "", alignment: ""}
+            }
 
             //These are the stateVariables that control the flow of the program
             var state = userData.state
             var cause = userData.cause
             var alignment = userData.alignment
 
+            // state = "" in the case of the start of a donation trade (either new user or restarting)
             if (state == "") {
-               state = "NONE"
+              state = "NONE"
             }
-            
-            if (inList(Object.keys(graph[state]), answer)) {
-               var stateVariables = graph[state][answer].f(sender)
 
-               // state = graph[state][answer].nextVertex
-               state = stateVariables.state
-               cause = stateVariables.cause
-               alignment = stateVariables.alignment
+            console.log("State:" + state)
+            console.log("answer:" + answer)
+            console.log("Graph:" + JSON.stringify(graph))
+            if (inList(Object.keys(graph[state]), answer)) {
+              var stateVariables = graph[state][answer].f(sender)
+
+              // state = graph[state][answer].nextVertex
+              state = stateVariables.state
+              cause = stateVariables.cause
+              alignment = stateVariables.alignment
             } 
             // Need an else statement
 
