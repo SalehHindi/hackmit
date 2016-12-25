@@ -56,10 +56,11 @@
   var graph = 
   {"NONE": 
     // Note that instead of passing in sender, I should pass in options as a dict with sender + the stateVariables
-    {"DonationTrade": {nextVertex: "donationTradeStarted", f: function(sender) {
+    {"DonationTrade": {nextVertex: "donationTradeStarted", f: function(options) {
+        // What happens if I load the default values as the current state variables?
         var stateVariables = {state: "", cause: "", alignment: ""}
 
-        quickReplies(sender, 
+        quickReplies(options.sender, 
                     "Hello. Care to do a donation trade?", 
                     ["Yes", "No", "Huh?"],
                     "donationTradeStarted")
@@ -68,9 +69,9 @@
       }}
     },
   "donationTradeStarted": 
-    {"Yes": {nextVertex: "CauseSelection", f: function(sender) {
+    {"Yes": {nextVertex: "CauseSelection", f: function(options) {
         var stateVariables = {state: "", cause: "", alignment: ""}
-        quickReplies(sender,
+        quickReplies(options.sender,
                     "Fantastic. Now choose the cause you care most about. And do be honest",
                     ["Gun Rights", "Abortion Rights"],
                     "CauseSelection")
@@ -79,24 +80,24 @@
 
         return stateVariables
       }},
-    "No": {nextVertex: "XXXX", f: function(sender) {
+    "No": {nextVertex: "XXXX", f: function(options) {
         var stateVariables = {state: "", cause: "", alignment: ""}
-        sendTextMessage(sender, "No1")
+        sendTextMessage(options.sender, "No1")
 
         return stateVariables
       }},
-    "Huh?": {nextVertex: "XXXX", f: function(sender) {
+    "Huh?": {nextVertex: "XXXX", f: function(options) {
         var stateVariables = {state: "", cause: "", alignment: ""}
-        sendTextMessage(sender, "Huh?")
+        sendTextMessage(options.sender, "Huh?")
 
         return stateVariables
       }}
     },
   "CauseSelection": 
-    {"Gun Rights": {nextVertex: "CauseSelected", f: function(sender) {
+    {"Gun Rights": {nextVertex: "CauseSelected", f: function(options) {
         var stateVariables = {state: "", cause: "", alignment: ""}
 
-        quickReplies(sender, 
+        quickReplies(options.sender, 
                     "Extraordinary choice. Tell me, how do you really feel about it?",
                     ["Very For", "Neutral", "Very Against"],
                     "CauseSelected"
@@ -106,18 +107,18 @@
 
         return stateVariables
       }},
-    "Abortion Rights": {nextVertex: "XXXX", f: function(sender) {
+    "Abortion Rights": {nextVertex: "XXXX", f: function(options) {
         var stateVariables = {state: "", cause: "", alignment: ""}
 
-        sendTextMessage(sender, "Abortion Rights")
+        sendTextMessage(options.sender, "Abortion Rights")
 
         return stateVariables
       }}
     },
   "CauseSelected": 
-    {"Very For": {nextVertex: "AlignmentSelected", f: function(sender) {
+    {"Very For": {nextVertex: "AlignmentSelected", f: function(options) {
         var stateVariables = {state: "", cause: "", alignment: ""}
-        sendButtons(sender, 
+        sendButtons(options.sender, 
                     "Confirm Trade",
                     "Do you want to post the trade?",
                     ["Yes", "No"],
@@ -129,24 +130,24 @@
 
         return stateVariables
       }},
-    "Neutral": {nextVertex: "XXXX", f: function(sender) {
+    "Neutral": {nextVertex: "XXXX", f: function(options) {
         var stateVariables = {state: "", cause: "", alignment: ""}
-        sendTextMessage(sender, "Neutral")
+        sendTextMessage(options.sender, "Neutral")
         return stateVariables
       }},
-    "Very Against": {nextVertex: "XXXX", f: function(sender) {
+    "Very Against": {nextVertex: "XXXX", f: function(options) {
         var stateVariables = {state: "", cause: "", alignment: ""}
-        sendTextMessage(sender, "Very Against")
+        sendTextMessage(options.sender, "Very Against")
         return stateVariables
       }}
     },
   "AlignmentSelected": 
-    {"Yes": {nextVertex: "", f: function(sender) {
+    {"Yes": {nextVertex: "", f: function(options) {
       var stateVariables = {state: "", cause: "", alignment: ""}
 
       // This is a line which posts a trade
-      // redisClient.lpush(["MoralTrade:awaitingMatches", JSON.stringify({name: sender, cause: cause, alignment: alignment})])
-      sendTextMessage(sender, "♞♚♝♛♟♜Trade Posted♞♚♝♛♟♜")
+      // redisClient.lpush(["MoralTrade:awaitingMatches", JSON.stringify({name: options.sender, cause: cause, alignment: alignment})])
+      sendTextMessage(options.sender, "♞♚♝♛♟♜Trade Posted♞♚♝♛♟♜")
 
       stateVariables.state = "" //Should be MatchFinding
       stateVariables.cause = ""
@@ -358,7 +359,11 @@
             console.log("answer:" + answer)
             console.log("Graph:" + JSON.stringify(graph))
             if (inList(Object.keys(graph[state]), answer)) {
-              var stateVariables = graph[state][answer].f(sender)
+              // This is the fundamental graph operation
+              var stateVariables = graph[state][answer].f({sender: sender, 
+                                                          state: state,
+                                                          cause: cause,
+                                                          alignment: alignment})
 
               // state = graph[state][answer].nextVertex
               state = stateVariables.state
