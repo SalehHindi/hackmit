@@ -1,7 +1,7 @@
   'use strict'
 
   var redis = require('redis')
-  var redisClient = redis.createClient(6379, "ec2-35-161-227-141.us-west-2.compute.amazonaws.com")
+  var redisClient = redis.createClient(6379, "ec2-35-166-15-97.us-west-2.compute.amazonaws.com")
   redisClient.on("connect", function(){console.log('connected')})
 
   var https = require('https')
@@ -223,6 +223,8 @@
           sendTextMessage(sender, "Answer: " + userInput)
         }
 
+        console.log("intent processing started")
+
         ////////////////////////////////////
         // Intent Processing
 
@@ -317,6 +319,9 @@
           }
         }
 
+        console.log("intent processing cleared")
+
+
         ////////////////////////////////////
         // State Selection
         // sendTextMessage(sender, "Program running")
@@ -359,10 +364,14 @@
               state = stateVariables.state
               cause = stateVariables.cause
               alignment = stateVariables.alignment
-            } 
+            } else {
+              sendTextMessage(sender, "Sorry, I didn't catch that. Could you repeat that?")
+            }
             // Need an else statement
+            console.log("Setting started")
 
             redisClient.set("MoralTrade:" + sender, JSON.stringify({"sender": sender, "state": state, "cause": cause, "alignment": alignment}))          
+            console.log("Setting ended")
 
           });
         }
