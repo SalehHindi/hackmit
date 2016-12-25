@@ -58,7 +58,7 @@
     // Note that instead of passing in sender, I should pass in options as a dict with sender + the stateVariables
     {"DonationTrade": {nextVertex: "donationTradeStarted", f: function(options) {
         // What happens if I load the default values as the current state variables?
-        var stateVariables = {state: "", cause: "", alignment: ""}
+        var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
 
         quickReplies(options.sender, 
                     "Hello. Care to do a donation trade?", 
@@ -70,7 +70,7 @@
     },
   "donationTradeStarted": 
     {"Yes": {nextVertex: "CauseSelection", f: function(options) {
-        var stateVariables = {state: "", cause: "", alignment: ""}
+        var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
         quickReplies(options.sender,
                     "Fantastic. Now choose the cause you care most about. And do be honest",
                     ["Gun Rights", "Abortion Rights"],
@@ -81,13 +81,13 @@
         return stateVariables
       }},
     "No": {nextVertex: "XXXX", f: function(options) {
-        var stateVariables = {state: "", cause: "", alignment: ""}
+        var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
         sendTextMessage(options.sender, "No1")
 
         return stateVariables
       }},
     "Huh?": {nextVertex: "XXXX", f: function(options) {
-        var stateVariables = {state: "", cause: "", alignment: ""}
+        var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
         sendTextMessage(options.sender, "Huh?")
 
         return stateVariables
@@ -95,7 +95,7 @@
     },
   "CauseSelection": 
     {"Gun Rights": {nextVertex: "CauseSelected", f: function(options) {
-        var stateVariables = {state: "", cause: "", alignment: ""}
+        var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
 
         quickReplies(options.sender, 
                     "Extraordinary choice. Tell me, how do you really feel about it?",
@@ -108,7 +108,7 @@
         return stateVariables
       }},
     "Abortion Rights": {nextVertex: "XXXX", f: function(options) {
-        var stateVariables = {state: "", cause: "", alignment: ""}
+        var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
 
         sendTextMessage(options.sender, "Abortion Rights")
 
@@ -117,7 +117,7 @@
     },
   "CauseSelected": 
     {"Very For": {nextVertex: "AlignmentSelected", f: function(options) {
-        var stateVariables = {state: "", cause: "", alignment: ""}
+        var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
         sendButtons(options.sender, 
                     "Confirm Trade",
                     "Do you want to post the trade?",
@@ -131,22 +131,22 @@
         return stateVariables
       }},
     "Neutral": {nextVertex: "XXXX", f: function(options) {
-        var stateVariables = {state: "", cause: "", alignment: ""}
+        var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
         sendTextMessage(options.sender, "Neutral")
         return stateVariables
       }},
     "Very Against": {nextVertex: "XXXX", f: function(options) {
-        var stateVariables = {state: "", cause: "", alignment: ""}
+        var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
         sendTextMessage(options.sender, "Very Against")
         return stateVariables
       }}
     },
   "AlignmentSelected": 
     {"Yes": {nextVertex: "", f: function(options) {
-      var stateVariables = {state: "", cause: "", alignment: ""}
+      var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
 
       // This is a line which posts a trade
-      // redisClient.lpush(["MoralTrade:awaitingMatches", JSON.stringify({name: options.sender, cause: cause, alignment: alignment})])
+      // redisClient.lpush(["MoralTrade:awaitingMatches", JSON.stringify({sender: options.sender, cause: options.cause, alignment: alignment})])
       sendTextMessage(options.sender, "♞♚♝♛♟♜Trade Posted♞♚♝♛♟♜")
 
       stateVariables.state = "" //Should be MatchFinding
