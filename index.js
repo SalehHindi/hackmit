@@ -9,7 +9,6 @@
   var VERIFY_TOKEN = "my_awesome_token"
 
   // I could make this leaner with a database of all the causes.
-  // redisClient.get("MoralTrade:CauseLis")
   var causes = [ 
     {
       title: "Gun Rights", 
@@ -57,13 +56,13 @@
   {"NONE": 
     // Note that instead of passing in sender, I should pass in options as a dict with sender + the stateVariables
     {"DonationTrade": {nextVertex: "donationTradeStarted", f: function(options) {
-        // What happens if I load the default values as the current state variables?
         var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
 
         quickReplies(options.sender, 
                     "Hello. Care to do a donation trade?", 
                     ["Yes", "No", "Huh?"],
                     "donationTradeStarted")
+
         stateVariables.state = "donationTradeStarted"
         return stateVariables
       }}
@@ -71,8 +70,9 @@
   "donationTradeStarted": 
     {"Yes": {nextVertex: "CauseSelection", f: function(options) {
         var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
+
         quickReplies(options.sender,
-                    "Fantastic. Now choose the cause you care most about. And do be honest",
+                    "Fantastic. Now choose the cause you care most about. And do be honest.",
                     ["Gun Rights", "Abortion Rights"],
                     "CauseSelection")
 
@@ -80,17 +80,33 @@
 
         return stateVariables
       }},
-    "No": {nextVertex: "XXXX", f: function(options) {
+    "No": {nextVertex: "NONE", f: function(options) {
         var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
-        sendTextMessage(options.sender, "No1")
+
+        sendTextMessage(options.sender, "In that case, I must bid you farewell. If you ever want to " +
+          "engage in a donation trade just write 'donation trade'. Farewell!")
+
+        stateVariables.state = ""
+        stateVariables.cause = ""
+        stateVariables.alignment = ""
 
         return stateVariables
       }},
-    "Huh?": {nextVertex: "XXXX", f: function(options) {
+    "Huh?": {nextVertex: "donationTradeStarted", f: function(options) {
         var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
-        sendTextMessage(options.sender, "Huh?")
 
-        return stateVariables
+        sendTextMessage(options.sender, "Let me do my best to explain donation trading. When two people disagree strongly " +
+          "about a hot bed cause like abortion or gun rights, instead of donating to causes that cancel each other out, they can " +
+          "both donate to highly effective charities that they find agreeable. " +
+          "In a way, they are agreeing to disagree and work towards a common good.")
+
+        // This is the way to automatically hop to another point in the graph.
+        // I need to have a pause between this line and the next step. Otherwise, it interferes with Facebook's instant reply buttons
+        return graph["NONE"]["DonationTrade"].f({sender: options.sender, 
+                                                    state: options.state,
+                                                    cause: options.cause,
+                                                    alignment: options.alignment})
+
       }}
     },
   "CauseSelection": 
@@ -100,17 +116,23 @@
         quickReplies(options.sender, 
                     "Extraordinary choice. Tell me, how do you really feel about it?",
                     ["Very For", "Neutral", "Very Against"],
-                    "CauseSelected"
-                    )
+                    "CauseSelected")
+
         stateVariables.state = "CauseSelected" 
         stateVariables.cause = "Gun Rights" 
 
         return stateVariables
       }},
-    "Abortion Rights": {nextVertex: "XXXX", f: function(options) {
+    "Abortion Rights": {nextVertex: "CauseSelected", f: function(options) {
         var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
 
-        sendTextMessage(options.sender, "Abortion Rights")
+        quickReplies(options.sender, 
+                    "Extraordinary choice. Tell me, how do you really feel about it?",
+                    ["Very For", "Neutral", "Very Against"],
+                    "CauseSelected")
+
+        stateVariables.state = "CauseSelected" 
+        stateVariables.cause = "Abortion Rights" 
 
         return stateVariables
       }}
@@ -118,26 +140,44 @@
   "CauseSelected": 
     {"Very For": {nextVertex: "AlignmentSelected", f: function(options) {
         var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
+
         sendButtons(options.sender, 
                     "Confirm Trade",
                     "Do you want to post the trade?",
                     ["Yes", "No"],
-                    "AlignmentSelected"
-                    )
+                    "AlignmentSelected")
 
         stateVariables.state = "AlignmentSelected"
         stateVariables.alignment = "Very For" 
 
         return stateVariables
       }},
-    "Neutral": {nextVertex: "XXXX", f: function(options) {
+    "Neutral": {nextVertex: "AlignmentSelected", f: function(options) {
         var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
-        sendTextMessage(options.sender, "Neutral")
+
+        sendButtons(options.sender, 
+                    "Confirm Trade",
+                    "Do you want to post the trade?",
+                    ["Yes", "No"],
+                    "AlignmentSelected")
+
+        stateVariables.state = "AlignmentSelected"
+        stateVariables.alignment = "Neutral" 
+
         return stateVariables
       }},
-    "Very Against": {nextVertex: "XXXX", f: function(options) {
+    "Very Against": {nextVertex: "AlignmentSelected", f: function(options) {
         var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
-        sendTextMessage(options.sender, "Very Against")
+
+        sendButtons(options.sender, 
+                    "Confirm Trade",
+                    "Do you want to post the trade?",
+                    ["Yes", "No"],
+                    "AlignmentSelected")
+
+        stateVariables.state = "AlignmentSelected"
+        stateVariables.alignment = "Very Against" 
+
         return stateVariables
       }}
     },
@@ -146,12 +186,14 @@
       var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
 
       // This is a line which posts a trade
-      // redisClient.lpush(["MoralTrade:awaitingMatches", JSON.stringify({sender: options.sender, cause: options.cause, alignment: alignment})])
+      redisClient.lpush(["MoralTrade:awaitingMatches", JSON.stringify({sender: options.sender, cause: options.cause, alignment: options.alignment})])
       sendTextMessage(options.sender, "♞♚♝♛♟♜Trade Posted♞♚♝♛♟♜")
 
       stateVariables.state = "" //Should be MatchFinding
       stateVariables.cause = ""
       stateVariables.alignment = ""
+
+      // Look for matches
 
       return stateVariables
 
@@ -322,7 +364,6 @@
 
         console.log("intent processing cleared")
 
-
         ////////////////////////////////////
         // State Selection
         // sendTextMessage(sender, "Program running")
@@ -358,6 +399,7 @@
             console.log("State:" + state)
             console.log("answer:" + answer)
             console.log("Graph:" + JSON.stringify(graph))
+
             if (inList(Object.keys(graph[state]), answer)) {
               // This is the fundamental graph operation
               var stateVariables = graph[state][answer].f({sender: sender, 
