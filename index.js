@@ -111,6 +111,7 @@
     },
   "CauseSelection": 
     {"Gun Rights": {nextVertex: "CauseSelected", f: function(options) {
+        // This could be collapsed with Abortion rights into one function because we get the cause in the options
         var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
 
         quickReplies(options.sender, 
@@ -183,21 +184,21 @@
     },
   "AlignmentSelected": 
     {"Yes": {nextVertex: "", f: function(options) {
-      var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
+        var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
 
-      // This is a line which posts a trade
-      redisClient.lpush(["MoralTrade:awaitingMatches", JSON.stringify({sender: options.sender, cause: options.cause, alignment: options.alignment})])
-      sendTextMessage(options.sender, "♞♚♝♛♟♜Trade Posted♞♚♝♛♟♜")
+        // This is a line which posts a trade
+        redisClient.lpush(["MoralTrade:awaitingMatches", JSON.stringify({sender: options.sender, cause: options.cause, alignment: options.alignment})])
+        sendTextMessage(options.sender, "♞♚♝♛♟♜Trade Posted♞♚♝♛♟♜")
 
-      stateVariables.state = "" //Should be MatchFinding
-      stateVariables.cause = ""
-      stateVariables.alignment = ""
+        stateVariables.state = "" //Should be MatchFinding
+        stateVariables.cause = ""
+        stateVariables.alignment = ""
 
-      // Look for matches
+        // Look for matches
 
-      return stateVariables
+        return stateVariables
 
-      // The next state will be match finding and then after that finances...
+        // The next state will be match finding and then after that finances...
     }}
   },
   "CATCHALLSTATE": 
