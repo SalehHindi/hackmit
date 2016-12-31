@@ -56,7 +56,7 @@
   {"NONE": 
     // Note that instead of passing in sender, I should pass in options as a dict with sender + the stateVariables
     {"DonationTrade": {nextVertex: "donationTradeStarted", f: function(options) {
-        var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
+        var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
 
         quickReplies(options.sender, 
                     "Hello. Care to do a donation trade?", 
@@ -69,7 +69,7 @@
     },
   "donationTradeStarted": 
     {"Yes": {nextVertex: "CauseSelection", f: function(options) {
-        var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
+        var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
 
         quickReplies(options.sender,
                     "Fantastic. Now choose the cause you care most about. And do be honest.",
@@ -81,7 +81,7 @@
         return stateVariables
       }},
     "No": {nextVertex: "NONE", f: function(options) {
-        var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
+        var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
 
         sendTextMessage(options.sender, "In that case, I must bid you farewell. If you ever want to " +
           "engage in a donation trade just write 'donation trade'. Farewell!")
@@ -93,7 +93,7 @@
         return stateVariables
       }},
     "Huh?": {nextVertex: "donationTradeStarted", f: function(options) {
-        var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
+        var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
 
         sendTextMessage(options.sender, "Let me do my best to explain donation trading. When two people disagree strongly " +
           "about a hot bed cause like abortion or gun rights, instead of donating to causes that cancel each other out, they can " +
@@ -112,7 +112,7 @@
   "CauseSelection": 
     {"Gun Rights": {nextVertex: "CauseSelected", f: function(options) {
         // This could be collapsed with Abortion rights into one function because we get the cause in the options
-        var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
+        var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
 
         quickReplies(options.sender, 
                     "Extraordinary choice. Tell me, how do you really feel about it?",
@@ -125,7 +125,7 @@
         return stateVariables
       }},
     "Abortion Rights": {nextVertex: "CauseSelected", f: function(options) {
-        var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
+        var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
 
         quickReplies(options.sender, 
                     "Extraordinary choice. Tell me, how do you really feel about it?",
@@ -140,7 +140,7 @@
     },
   "CauseSelected": 
     {"Very For": {nextVertex: "AlignmentSelected", f: function(options) {
-        var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
+        var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
 
         sendButtons(options.sender, 
                     "Confirm Trade",
@@ -154,7 +154,7 @@
         return stateVariables
       }},
     "Neutral": {nextVertex: "AlignmentSelected", f: function(options) {
-        var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
+        var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
 
         sendButtons(options.sender, 
                     "Confirm Trade",
@@ -168,7 +168,7 @@
         return stateVariables
       }},
     "Very Against": {nextVertex: "AlignmentSelected", f: function(options) {
-        var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
+        var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
 
         sendButtons(options.sender, 
                     "Confirm Trade",
@@ -184,17 +184,64 @@
     },
   "AlignmentSelected": 
     {"Yes": {nextVertex: "", f: function(options) {
-        var stateVariables = {state: options.state, cause: options.cause, alignment: options.cause}
+        var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
 
-        // This is a line which posts a trade
-        redisClient.lpush(["MoralTrade:awaitingMatches", JSON.stringify({sender: options.sender, cause: options.cause, alignment: options.alignment})])
+        var matchFound = false
         sendTextMessage(options.sender, "♞♚♝♛♟♜Trade Posted♞♚♝♛♟♜")
+
+        console.log("Lrange Started")
+        redisClient.lrange('MoralTrade:awaitingMatches', 0, -1, function(err, matches) {
+          // matches = matches.map(function(x){JSON.parse(x)}) is equivalent to the 3 lines below
+          for (var i = 0; i < matches.length; i++) {
+            matches[i] = JSON.parse(matches[i])
+          }
+
+          console.log("Matches: " + matches)
+
+          // One idea for the future: The total list of alignments should be a huge list of different
+          //   alignments and you specify how many different alignments you want for the application.
+          var alignments = ["Very For", "Neutral", "Very Against"]
+          var oppositeAlignment = alignments[(alignments.length-1) - alignments.indexOf(options.alignment)]
+
+          console.log("1: " + options.alignment)
+          console.log("2: " + alignments.indexOf(options.alignment))
+          console.log("2: " + oppositeAlignment)
+
+          console.log("loop started***")
+          for (var i = 0; i < matches.length; i++) {
+            console.log("Remove: " + JSON.stringify(matches[i]))
+            console.log("Matches[i]: " + matches[i])
+            console.log("Matches keys: " + Object.keys(matches[i]))
+
+            console.log("loop: " + i)
+            console.log("match.cause: " + matches[i].cause)
+            console.log("options.cause: " + options.cause)
+            console.log("match.alignment: " + matches[i].alignment)
+            console.log("opposite alignment: " + oppositeAlignment)
+
+            if (matches[i].cause == options.cause && matches[i].alignment == oppositeAlignment) {
+              console.log("We have a match!")
+              redisClient.lrem('MoralTrade:awaitingMatches', 1, JSON.stringify(matches[i])) // This isn't working....
+
+              // sendTextMessage(options.sender, "You got a match!!!") // The person who is currently posting the trade
+              sendTextMessage(matches[i].sender, "You got a match!!!") // The person who posted the trade earlier
+
+              // Initiate payments workflow
+              matchFound = true
+              break
+            }
+          }
+
+        })
+        console.log("Lrange ended")
+        
+        if (!matchFound) {
+          redisClient.lpush(["MoralTrade:awaitingMatches", JSON.stringify({sender: options.sender, cause: options.cause, alignment: options.alignment})])
+        }
 
         stateVariables.state = "" //Should be MatchFinding
         stateVariables.cause = ""
         stateVariables.alignment = ""
-
-        // Look for matches
 
         return stateVariables
 
@@ -255,6 +302,7 @@
 
           // If the user sends text by clicking a quick reply button
           if (messagingEvent.message.quick_reply) {
+            // Need a try statement here
             userInput = messagingEvent.message.quick_reply.payload.split(".")[1]
           } 
 
