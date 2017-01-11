@@ -37,8 +37,8 @@
       subtitle: "The right to freely have an abortion.", 
       buttons: [
         {
-          type: "web_url",
-          url: "https://petersfancybrownhats.com",
+          type: "postback",
+          payload: "state.Abortion Rights",
           title: "Choose Abortion Rights"
         },
         {
@@ -58,8 +58,8 @@
       subtitle: "The US Presidential Election", 
       buttons: [
         {
-          type: "web_url",
-          url: "https://petersfancybrownhats.com",
+          type: "postback",
+          payload: "state.Presidential Elections",
           title: "Choose Presidential Elections"
         },
         {
@@ -79,8 +79,8 @@
       subtitle: "The blah blah blah", 
       buttons: [
         {
-          type: "web_url",
-          url: "https://petersfancybrownhats.com",
+          type: "postback",
+          payload: "state.Some Other Cause",
           title: "Choose Some Other Cause"
         },
         {
