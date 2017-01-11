@@ -8,7 +8,7 @@
   var PAGE_TOKEN = "EAAPaEOjibZBkBAPRV91xJyQzh4hCdo1MD1QIwZBgMkNEI2ah9FQObF9QTvSJ5ulVaLRX5L5Jdvr1tGL5S895dQX77BwDR2UbTxbZBgZBw3gSA1yEIXujMYDWobzDlhs76NHuZCfklMEN06ghXRWzttlTLWxrahcRFfRn0ZAuZCizgZDZD"
   var VERIFY_TOKEN = "my_awesome_token"
 
-  // I could make this leaner with a database of all the causes or load it via some external file.
+  // load from causes.txt instead
   var causes = [ 
     {
       title: "Gun Rights", 
@@ -18,7 +18,7 @@
         {
           type: "postback",
           title: "Choose Gun Rights",
-          payload: "state.Gun Rights"
+          payload: "UserSelectedCause.Gun Rights"
         },
         {
           type: "web_url",
@@ -38,7 +38,7 @@
       buttons: [
         {
           type: "postback",
-          payload: "state.Abortion Rights",
+          payload: "UserSelectedCause.Abortion Rights",
           title: "Choose Abortion Rights"
         },
         {
@@ -59,7 +59,7 @@
       buttons: [
         {
           type: "postback",
-          payload: "state.Presidential Elections",
+          payload: "UserSelectedCause.Presidential Elections",
           title: "Choose Presidential Elections"
         },
         {
@@ -80,7 +80,7 @@
       buttons: [
         {
           type: "postback",
-          payload: "state.Some Other Cause",
+          payload: "UserSelectedCause.Some Other Cause",
           title: "Choose Some Other Cause"
         },
         {
@@ -181,21 +181,9 @@
         stateVariables.cause = "Abortion Rights" 
 
         return stateVariables
-      }},
-    "Selecting A Cause": {nextVertex: "CauseSelected", f: function(options) {
-        var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
-
-        quickReplies(options.sender, 
-                    "Extraordinary choice. Tell me, how do you really feel about it?",
-                    ["Very For", "Neutral", "Very Against"],
-                    "CauseSelected")
-
-        stateVariables.state = "CauseSelected" 
-        stateVariables.cause = "Abortion Rights" 
-
-        return stateVariables 
       }}
     },
+  // Should be renamed to AlignmentSelection
   "CauseSelected": 
     // All the alignments could be collapsed into one section 
     {"Very For": {nextVertex: "AlignmentSelected", f: function(options) {
@@ -241,6 +229,7 @@
         return stateVariables
       }}
     },
+  // Should be renamed to Confirm Trade
   "AlignmentSelected": 
     {"Yes": {nextVertex: "", f: function(options) {
         var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
@@ -399,7 +388,7 @@
             case "yes":
             case "si":
             case "yup":
-            case "Yup":
+            case "y":
               answer = "Yes"
 
               break
@@ -765,3 +754,4 @@
   // 2) Multiple responses and a method for randomly choosing them.
   // 3) General cause/alignment selection
   // 4) Better error handling
+  // 5) Add a greeting
