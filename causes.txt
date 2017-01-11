@@ -1,0 +1,86 @@
+ var causes = [ 
+    {
+      title: "Gun Rights", 
+      image_url:"https://upload.wikimedia.org/wikipedia/commons/e/eb/Ash_Tree_-_geograph.org.uk_-_590710.jpg",
+      subtitle: "The right for people to own arms.", 
+      buttons: [
+        {
+          type: "postback",
+          title: "Choose Gun Rights",
+          payload: "state.Gun Rights"
+        },
+        {
+          type: "web_url",
+          url: "https://en.wikipedia.org/wiki/Tree#/media/File:Ash_Tree_-_geograph.org.uk_-_590710.jpg",
+          title: "Wikipedia"
+        },
+        {
+          type: "web_url",
+          url: "https://en.wikipedia.org/wiki/Tree#/media/File:Ash_Tree_-_geograph.org.uk_-_590710.jpg",
+          title: "Visit Website"
+        }]
+    },
+    {
+      title: "Abortion Rights", 
+      image_url:"https://upload.wikimedia.org/wikipedia/commons/e/eb/Ash_Tree_-_geograph.org.uk_-_590710.jpg",
+      subtitle: "The right to freely have an abortion.", 
+      buttons: [
+        {
+          type: "postback",
+          payload: "state.Abortion Rights",
+          title: "Choose Abortion Rights"
+        },
+        {
+          type: "web_url",
+          url: "https://en.wikipedia.org/wiki/Tree#/media/File:Ash_Tree_-_geograph.org.uk_-_590710.jpg",
+          title: "Wikipedia"
+        },
+        {
+          type: "web_url",
+          url: "https://en.wikipedia.org/wiki/Tree#/media/File:Ash_Tree_-_geograph.org.uk_-_590710.jpg",
+          title: "Visit Website"
+        }]
+    },
+    {
+      title: "Presidential Elections", 
+      image_url:"https://upload.wikimedia.org/wikipedia/commons/e/eb/Ash_Tree_-_geograph.org.uk_-_590710.jpg",
+      subtitle: "The US Presidential Election", 
+      buttons: [
+        {
+          type: "postback",
+          payload: "state.Presidential Elections",
+          title: "Choose Presidential Elections"
+        },
+        {
+          type: "web_url",
+          url: "https://en.wikipedia.org/wiki/Tree#/media/File:Ash_Tree_-_geograph.org.uk_-_590710.jpg",
+          title: "Wikipedia"
+        },
+        {
+          type: "web_url",
+          url: "https://en.wikipedia.org/wiki/Tree#/media/File:Ash_Tree_-_geograph.org.uk_-_590710.jpg",
+          title: "Visit Website "
+        }]
+    },
+    {
+      title: "Some Other Hot Cause", 
+      image_url:"https://upload.wikimedia.org/wikipedia/commons/e/eb/Ash_Tree_-_geograph.org.uk_-_590710.jpg",
+      subtitle: "The blah blah blah", 
+      buttons: [
+        {
+          type: "postback",
+          payload: "state.Some Other Cause",
+          title: "Choose Some Other Cause"
+        },
+        {
+          type: "web_url",
+          url: "https://en.wikipedia.org/wiki/Tree#/media/File:Ash_Tree_-_geograph.org.uk_-_590710.jpg",
+          title: "Wikipedia"
+        },
+        {
+          type: "web_url",
+          url: "https://en.wikipedia.org/wiki/Tree#/media/File:Ash_Tree_-_geograph.org.uk_-_590710.jpg",
+          title: "Visit Website "
+        }]
+    }
+  ]
