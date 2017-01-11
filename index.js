@@ -1,7 +1,7 @@
   'use strict'
 
   var redis = require('redis')
-  var redisClient = redis.createClient(6379, "ec2-35-166-15-97.us-west-2.compute.amazonaws.com")
+  var redisClient = redis.createClient(6379, "ec2-35-166-148-211.us-west-2.compute.amazonaws.com")
   redisClient.on("connect", function(){console.log('connected')})
 
   var https = require('https')
@@ -54,7 +54,6 @@
 
   var graph = 
   {"NONE": 
-    // Note that instead of passing in sender, I should pass in options as a dict with sender + the stateVariables
     {"DonationTrade": {nextVertex: "donationTradeStarted", f: function(options) {
         var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
 
@@ -139,6 +138,7 @@
       }}
     },
   "CauseSelected": 
+    // All the alignments could be collapsed into one section 
     {"Very For": {nextVertex: "AlignmentSelected", f: function(options) {
         var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
 
@@ -221,7 +221,8 @@
 
             if (matches[i].cause == options.cause && matches[i].alignment == oppositeAlignment) {
               console.log("We have a match!")
-              redisClient.lrem('MoralTrade:awaitingMatches', 1, JSON.stringify(matches[i])) // This isn't working....
+              // For some reason, when a match is found, there is an extra entry in the DB...
+              redisClient.lrem('MoralTrade:awaitingMatches', 1, JSON.stringify(matches[i])) 
 
               // sendTextMessage(options.sender, "You got a match!!!") // The person who is currently posting the trade
               sendTextMessage(matches[i].sender, "You got a match!!!") // The person who posted the trade earlier
@@ -700,3 +701,7 @@
 
 
   //👍 👎 🤖 ♞♚♝♛♟♜
+  // Planned Features:
+  // 1) Intelligent intent processing
+  // 2) Multiple responses and a method for randomly choosing them.
+  // 3) General cause/alignment selection
