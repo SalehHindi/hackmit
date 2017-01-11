@@ -8,46 +8,90 @@
   var PAGE_TOKEN = "EAAPaEOjibZBkBAPRV91xJyQzh4hCdo1MD1QIwZBgMkNEI2ah9FQObF9QTvSJ5ulVaLRX5L5Jdvr1tGL5S895dQX77BwDR2UbTxbZBgZBw3gSA1yEIXujMYDWobzDlhs76NHuZCfklMEN06ghXRWzttlTLWxrahcRFfRn0ZAuZCizgZDZD"
   var VERIFY_TOKEN = "my_awesome_token"
 
-  // I could make this leaner with a database of all the causes.
+  // I could make this leaner with a database of all the causes or load it via some external file.
   var causes = [ 
     {
       title: "Gun Rights", 
+      image_url:"https://upload.wikimedia.org/wikipedia/commons/e/eb/Ash_Tree_-_geograph.org.uk_-_590710.jpg",
       subtitle: "The right for people to own arms.", 
       buttons: [
         {
+          type: "postback",
+          title: "Choose Gun Rights",
+          payload: "state.Gun Rights"
+        },
+        {
           type: "web_url",
-          url: "https://petersfancybrownhats.com",
-          title: "Placeholder Button"
+          url: "https://en.wikipedia.org/wiki/Tree#/media/File:Ash_Tree_-_geograph.org.uk_-_590710.jpg",
+          title: "Wikipedia"
+        },
+        {
+          type: "web_url",
+          url: "https://en.wikipedia.org/wiki/Tree#/media/File:Ash_Tree_-_geograph.org.uk_-_590710.jpg",
+          title: "Visit Website"
         }]
     },
     {
       title: "Abortion Rights", 
+      image_url:"https://upload.wikimedia.org/wikipedia/commons/e/eb/Ash_Tree_-_geograph.org.uk_-_590710.jpg",
       subtitle: "The right to freely have an abortion.", 
       buttons: [
         {
           type: "web_url",
           url: "https://petersfancybrownhats.com",
-          title: "Placeholder Button"
+          title: "Choose Abortion Rights"
+        },
+        {
+          type: "web_url",
+          url: "https://en.wikipedia.org/wiki/Tree#/media/File:Ash_Tree_-_geograph.org.uk_-_590710.jpg",
+          title: "Wikipedia"
+        },
+        {
+          type: "web_url",
+          url: "https://en.wikipedia.org/wiki/Tree#/media/File:Ash_Tree_-_geograph.org.uk_-_590710.jpg",
+          title: "Visit Website"
         }]
     },
     {
       title: "Presidential Elections", 
+      image_url:"https://upload.wikimedia.org/wikipedia/commons/e/eb/Ash_Tree_-_geograph.org.uk_-_590710.jpg",
       subtitle: "The US Presidential Election", 
       buttons: [
         {
           type: "web_url",
           url: "https://petersfancybrownhats.com",
-          title: "Placeholder Button"
+          title: "Choose Presidential Elections"
+        },
+        {
+          type: "web_url",
+          url: "https://en.wikipedia.org/wiki/Tree#/media/File:Ash_Tree_-_geograph.org.uk_-_590710.jpg",
+          title: "Wikipedia"
+        },
+        {
+          type: "web_url",
+          url: "https://en.wikipedia.org/wiki/Tree#/media/File:Ash_Tree_-_geograph.org.uk_-_590710.jpg",
+          title: "Visit Website "
         }]
     },
     {
       title: "Some Other Hot Cause", 
+      image_url:"https://upload.wikimedia.org/wikipedia/commons/e/eb/Ash_Tree_-_geograph.org.uk_-_590710.jpg",
       subtitle: "The blah blah blah", 
       buttons: [
         {
           type: "web_url",
           url: "https://petersfancybrownhats.com",
-          title: "Placeholder Button"
+          title: "Choose Some Other Cause"
+        },
+        {
+          type: "web_url",
+          url: "https://en.wikipedia.org/wiki/Tree#/media/File:Ash_Tree_-_geograph.org.uk_-_590710.jpg",
+          title: "Wikipedia"
+        },
+        {
+          type: "web_url",
+          url: "https://en.wikipedia.org/wiki/Tree#/media/File:Ash_Tree_-_geograph.org.uk_-_590710.jpg",
+          title: "Visit Website "
         }]
     }
   ]
@@ -70,10 +114,12 @@
     {"Yes": {nextVertex: "CauseSelection", f: function(options) {
         var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
 
-        quickReplies(options.sender,
-                    "Fantastic. Now choose the cause you care most about. And do be honest.",
-                    ["Gun Rights", "Abortion Rights"],
-                    "CauseSelection")
+        // Replace with a carousel
+        carousel(options.sender, causes, "CauseSelection")
+        // quickReplies(options.sender,
+        //             "Fantastic. Now choose the cause you care most about. And do be honest.",
+        //             ["Gun Rights", "Abortion Rights"],
+        //             "CauseSelection")
 
         stateVariables.state = "CauseSelection"
 
@@ -135,6 +181,19 @@
         stateVariables.cause = "Abortion Rights" 
 
         return stateVariables
+      }},
+    "Selecting A Cause": {nextVertex: "CauseSelected", f: function(options) {
+        var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
+
+        quickReplies(options.sender, 
+                    "Extraordinary choice. Tell me, how do you really feel about it?",
+                    ["Very For", "Neutral", "Very Against"],
+                    "CauseSelected")
+
+        stateVariables.state = "CauseSelected" 
+        stateVariables.cause = "Abortion Rights" 
+
+        return stateVariables 
       }}
     },
   "CauseSelected": 
@@ -313,7 +372,8 @@
         // If a user clicks a button
         if (messagingEvent.postback) {
           userInput = messagingEvent.postback.payload.split(".")[1]
-          sendTextMessage(sender, "Answer: " + userInput)
+          console.log("Reached")
+          console.log(userInput)
         }
 
         console.log("intent processing started")
@@ -515,7 +575,6 @@
       }
     }
 
-    // Buttons: Buttons will be information about the cause to learn more.
     // In the future it might be a link to a wikipedia article, infographics, how many people have donated, maybe a way to contact
     // People who voted a certain way... etc.
 
@@ -705,3 +764,4 @@
   // 1) Intelligent intent processing
   // 2) Multiple responses and a method for randomly choosing them.
   // 3) General cause/alignment selection
+  // 4) Better error handling
