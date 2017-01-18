@@ -114,6 +114,7 @@
     {"Yes": {nextVertex: "CauseSelection", f: function(options) {
         var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
 
+        sendTextMessage(options.sender, "Please select a cause that you care about")
         carousel(options.sender, causes, "CauseSelection")
         // quickReplies(options.sender,
         //             "Fantastic. Now choose the cause you care most about. And do be honest.",
@@ -163,7 +164,6 @@
                     "AlignmentSelection")
 
         stateVariables.state = "AlignmentSelection" 
-        // We need some way to get answer 
         stateVariables.cause = options.answer
 
         return stateVariables
@@ -180,7 +180,6 @@
                     "ConfirmTrade")
 
         stateVariables.state = "ConfirmTrade"
-        // We need some way to get answer.
         stateVariables.alignment = options.answer 
 
         return stateVariables
@@ -253,10 +252,43 @@
         // The next state will be match finding and then after that finances...
     }}
   },
-  "CATCHALLSTATE": 
-    {"CATCHALLANSWER": {nextVertex: "XXXX", f: function() {}}
-    }
+  "ERROR": 
+    {"ERROR": {nextVertex: "", f: function(options) {
+        sendTextMessage(options.sender, "Sorry, I didn't catch that.")
+        if (options.state == "NONE") {
+          // sendTextMessage(options.sender, "")
+          var newStateVariables = graph["NONE"]["DonationTrade"].f({sender: options.sender, 
+                                              state: options.state,
+                                              cause: options.cause,
+                                              alignment: options.alignment})
+          return newStateVariables
+        } else if (options.cause == "") {
+          // set state to cause selection
+          var newStateVariables = graph["donationTradeStarted"]["Yes"].f({sender: options.sender, 
+                                              state: options.state,
+                                              cause: options.cause,
+                                              alignment: options.alignment})
+          return newStateVariables
+        } else if (options.alignment == "") {
+          // set state to alignment selection
+          var newStateVariables = graph["CauseSelection"]["Cause"].f({sender: options.sender, 
+                                              state: options.state,
+                                              cause: options.cause,
+                                              alignment: options.alignment})
+          return newStateVariables
+        } else {
+          // Set state to confirmation
+          sendTextMessage(options.sender, "Ready to go. Do you want to confirm?")
+          var newStateVariables = graph["AlignmentSelection"]["Alignment"].f({sender: options.sender, 
+                                              state: options.state,
+                                              cause: options.cause,
+                                              alignment: options.alignment})
+          return newStateVariables
+        }
+
+    }}
   }
+}
 
   // Turn this into a function
   exports.handler = (event, context, callback) => {
@@ -363,6 +395,7 @@
             case "guns":
             case "gun":
             // case "":
+            // case "":
               answer = "Gun Rights"
 
               break
@@ -458,16 +491,9 @@
             }
 
             // state = "" in the case of the start of a donation trade (either new user or restarting)
-            if (state == "") {
+            if (state == "" || state == undefined) {
               state = "NONE"
             }
-
-            // Add a vertex variable. 
-            // If answer in listOfCauses: vertex = "cause". 
-            // If answer in listOfAlignments: vertex = "alignment"
-            // else: vertex = answer
-            // and then do graph[state][vertex].f instead of graph[state][answer].f
-            // and also pass in answer: answer to options to be able to combine alignments AND causes.
 
             console.log("State:" + state)
             console.log("answer:" + answer)
@@ -486,7 +512,16 @@
               cause = stateVariables.cause
               alignment = stateVariables.alignment
             } else {
-              sendTextMessage(sender, "Sorry, I didn't catch that. Could you repeat that?")
+              console.log("error hit")
+              var stateVariables = graph["ERROR"]["ERROR"].f({sender: sender, 
+                                                              state: state,
+                                                              cause: cause,
+                                                              alignment: alignment,
+                                                              answer: answer})
+              console.log("stateVariables" + stateVariables)
+              state = stateVariables.state
+              cause = stateVariables.cause
+              alignment = stateVariables.alignment
             }
             console.log("Setting started")
 
@@ -725,19 +760,9 @@
     return false
   }
 
-  // function randomResponse(respType) {
-  //     
-  // }
-
-  // function findOpenStates() {
-  // 
-  // }
-
-
   //👍 👎 🤖 ♞♚♝♛♟♜
 
   // MVP:
-  // - Better error handling
   // - Add a greeting
 
   // Planned Features
