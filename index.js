@@ -1,7 +1,7 @@
   'use strict'
 
   var redis = require('redis')
-  var redisClient = redis.createClient(6379, "ec2-35-166-148-211.us-west-2.compute.amazonaws.com")
+  var redisClient = redis.createClient(6379, "ec2-35-160-109-188.us-west-2.compute.amazonaws.com")
   redisClient.on("connect", function(){console.log('connected')})
 
   var https = require('https')
@@ -155,8 +155,7 @@
       }}
     },
   "CauseSelection": 
-    {"Gun Rights": {nextVertex: "CauseSelected", f: function(options) {
-        // This could be collapsed with Abortion rights into one function because we get the cause in the options
+    {"Cause": {nextVertex: "CauseSelected", f: function(options) {
         var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
 
         quickReplies(options.sender, 
@@ -165,20 +164,8 @@
                     "CauseSelected")
 
         stateVariables.state = "CauseSelected" 
-        stateVariables.cause = "Gun Rights" 
-
-        return stateVariables
-      }},
-    "Abortion Rights": {nextVertex: "CauseSelected", f: function(options) {
-        var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
-
-        quickReplies(options.sender, 
-                    "Extraordinary choice. Tell me, how do you really feel about it?",
-                    ["Very For", "Neutral", "Very Against"],
-                    "CauseSelected")
-
-        stateVariables.state = "CauseSelected" 
-        stateVariables.cause = "Abortion Rights" 
+        // We need some way to get answer 
+        stateVariables.cause = options.answer
 
         return stateVariables
       }}
@@ -186,7 +173,7 @@
   // Should be renamed to AlignmentSelection
   "CauseSelected": 
     // All the alignments could be collapsed into one section 
-    {"Very For": {nextVertex: "AlignmentSelected", f: function(options) {
+    {"Alignment": {nextVertex: "AlignmentSelected", f: function(options) {
         var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
 
         sendButtons(options.sender, 
@@ -196,40 +183,13 @@
                     "AlignmentSelected")
 
         stateVariables.state = "AlignmentSelected"
-        stateVariables.alignment = "Very For" 
-
-        return stateVariables
-      }},
-    "Neutral": {nextVertex: "AlignmentSelected", f: function(options) {
-        var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
-
-        sendButtons(options.sender, 
-                    "Confirm Trade",
-                    "Do you want to post the trade?",
-                    ["Yes", "No"],
-                    "AlignmentSelected")
-
-        stateVariables.state = "AlignmentSelected"
-        stateVariables.alignment = "Neutral" 
-
-        return stateVariables
-      }},
-    "Very Against": {nextVertex: "AlignmentSelected", f: function(options) {
-        var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
-
-        sendButtons(options.sender, 
-                    "Confirm Trade",
-                    "Do you want to post the trade?",
-                    ["Yes", "No"],
-                    "AlignmentSelected")
-
-        stateVariables.state = "AlignmentSelected"
-        stateVariables.alignment = "Very Against" 
+        // We need some way to get answer.
+        stateVariables.alignment = options.answer 
 
         return stateVariables
       }}
     },
-  // Should be renamed to Confirm Trade
+  // Should be renamed to ConfirmTrade
   "AlignmentSelected": 
     {"Yes": {nextVertex: "", f: function(options) {
         var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
@@ -421,7 +381,7 @@
               break
 
             case "Elections":
-            // case "":
+            case "Presidential Elections":
             // case "":
             // case "":
             // case "":
@@ -490,21 +450,40 @@
             var cause = userData.cause
             var alignment = userData.alignment
 
+            var vertex
+            var listOfCauses = ["Presidential Elections", "Gun Rights", "Abortion Rights"]
+            var listOfAlignments = ["Very For", "Neutral", "Very Against"]
+            if (inList(listOfCauses, answer)) {
+              vertex = "Cause"
+            } else if (inList(listOfAlignments, answer)) {
+              vertex = "Alignment"
+            } else {
+              vertex = answer
+            }
+
             // state = "" in the case of the start of a donation trade (either new user or restarting)
             if (state == "") {
               state = "NONE"
             }
 
+            // Add a vertex variable. 
+            // If answer in listOfCauses: vertex = "cause". 
+            // If answer in listOfAlignments: vertex = "alignment"
+            // else: vertex = answer
+            // and then do graph[state][vertex].f instead of graph[state][answer].f
+            // and also pass in answer: answer to options to be able to combine alignments AND causes.
+
             console.log("State:" + state)
             console.log("answer:" + answer)
             console.log("Graph:" + JSON.stringify(graph))
 
-            if (inList(Object.keys(graph[state]), answer)) {
+            if (inList(Object.keys(graph[state]), vertex)) {
               // This is the fundamental graph operation
-              var stateVariables = graph[state][answer].f({sender: sender, 
+              var stateVariables = graph[state][vertex].f({sender: sender, 
                                                           state: state,
                                                           cause: cause,
-                                                          alignment: alignment})
+                                                          alignment: alignment,
+                                                          answer: answer})
 
               // state = graph[state][answer].nextVertex
               state = stateVariables.state
@@ -737,6 +716,10 @@
   }
 
   function inList(list, el) {
+    // Another way to do inList:
+    // [1,2,3,4,5].reduce(function(x, y) {return (x === true || y == 0)}, false)
+    // list.reduce(function(x, y) {return (x === true || y == el)}, false)
+
     var i = 0
     while (i < list.length) {
       if (list[i] === el) {
@@ -747,11 +730,18 @@
     return false
   }
 
+  // function randomResponse(respType) {
+  //     
+  // }
+
 
   //👍 👎 🤖 ♞♚♝♛♟♜
-  // Planned Features:
-  // 1) Intelligent intent processing
-  // 2) Multiple responses and a method for randomly choosing them.
-  // 3) General cause/alignment selection
-  // 4) Better error handling
-  // 5) Add a greeting
+
+  // MVP:
+  // - General cause/alignment selection
+  // - Better error handling
+  // - Add a greeting
+
+  // Planned Features
+  // - Intelligent intent processing
+  // - Multiple responses and a method for randomly choosing them.
