@@ -488,7 +488,6 @@
             } else {
               sendTextMessage(sender, "Sorry, I didn't catch that. Could you repeat that?")
             }
-            // Need an else statement
             console.log("Setting started")
 
             redisClient.set("MoralTrade:" + sender, JSON.stringify({"sender": sender, "state": state, "cause": cause, "alignment": alignment}))          
@@ -730,11 +729,14 @@
   //     
   // }
 
+  // function findOpenStates() {
+  // 
+  // }
+
 
   //👍 👎 🤖 ♞♚♝♛♟♜
 
   // MVP:
-  // - General cause/alignment selection
   // - Better error handling
   // - Add a greeting
 
