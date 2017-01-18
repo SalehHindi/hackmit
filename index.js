@@ -114,7 +114,6 @@
     {"Yes": {nextVertex: "CauseSelection", f: function(options) {
         var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
 
-        // Replace with a carousel
         carousel(options.sender, causes, "CauseSelection")
         // quickReplies(options.sender,
         //             "Fantastic. Now choose the cause you care most about. And do be honest.",
@@ -155,42 +154,39 @@
       }}
     },
   "CauseSelection": 
-    {"Cause": {nextVertex: "CauseSelected", f: function(options) {
+    {"Cause": {nextVertex: "AlignmentSelection", f: function(options) {
         var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
 
         quickReplies(options.sender, 
                     "Extraordinary choice. Tell me, how do you really feel about it?",
                     ["Very For", "Neutral", "Very Against"],
-                    "CauseSelected")
+                    "AlignmentSelection")
 
-        stateVariables.state = "CauseSelected" 
+        stateVariables.state = "AlignmentSelection" 
         // We need some way to get answer 
         stateVariables.cause = options.answer
 
         return stateVariables
       }}
     },
-  // Should be renamed to AlignmentSelection
-  "CauseSelected": 
-    // All the alignments could be collapsed into one section 
-    {"Alignment": {nextVertex: "AlignmentSelected", f: function(options) {
+  "AlignmentSelection": 
+    {"Alignment": {nextVertex: "ConfirmTrade", f: function(options) {
         var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
 
         sendButtons(options.sender, 
                     "Confirm Trade",
                     "Do you want to post the trade?",
                     ["Yes", "No"],
-                    "AlignmentSelected")
+                    "ConfirmTrade")
 
-        stateVariables.state = "AlignmentSelected"
+        stateVariables.state = "ConfirmTrade"
         // We need some way to get answer.
         stateVariables.alignment = options.answer 
 
         return stateVariables
       }}
     },
-  // Should be renamed to ConfirmTrade
-  "AlignmentSelected": 
+  "ConfirmTrade": 
     {"Yes": {nextVertex: "", f: function(options) {
         var stateVariables = {state: options.state, cause: options.cause, alignment: options.alignment}
 
